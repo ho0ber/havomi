@@ -6,4 +6,5 @@ DEVICES = DIR.joinpath("devices")
 
 
 if __name__ == "__main__":
-    dev = Device(DEVICES.joinpath("xte.yaml"))
+    dev = Device(DEVICES.joinpath("xte-mc.yaml"))
+    dev.listen()

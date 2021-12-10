@@ -1,0 +1,55 @@
+display_name: Behringer X-Touch Extender MC
+device_names:
+  input: X-Touch-Ext X-TOUCH_INT
+  output: X-Touch-Ext X-TOUCH_INT
+
+control_groups:
+  - name: main
+    controls:
+    -   fader:       {type: pw, channel: 0,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 104,field: velocity, lock: true}
+        select_knob: {type: cc, control: 16, field: value,    feedback: false, dec: 65, inc: 1}
+        select:      {type: note,  note: 24, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 16, field: velocity, feedback: true, binary: true}
+
+    -   fader:       {type: pw, channel: 1,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 105,field: velocity, lock: true}
+        select_knob: {type: cc, control: 17, field: value,    feedback: false, dec: 65, inc: 1}
+        select:      {type: note,  note: 25, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 17, field: velocity, feedback: true, binary: true}
+
+    -   fader:       {type: pw, channel: 2,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 106,field: velocity, lock: true}
+        select_knob: {type: cc, control: 18, field: value,    feedback: false, dec: 65, inc: 1}
+        select:      {type: note,  note: 26, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 18, field: velocity, feedback: true, binary: true}
+
+    -   fader:       {type: pw, channel: 3,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 107,field: velocity, lock: true}
+        select_knob: {type: cc, control: 19, field: value,    feedback: false, dec: 65, inc: 1}
+        select:      {type: note,  note: 27, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 19, field: velocity, feedback: true, binary: true}
+
+    -   fader:       {type: pw, channel: 4,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 108,field: velocity, lock: true}
+        select_knob: {type: cc, control: 20, field: value,    feedback: false, dec: 65, inc: 1}
+        select:      {type: note,  note: 28, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 20, field: velocity, feedback: true, binary: true}
+
+    -   fader:       {type: pw, channel: 5,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 109,field: velocity, lock: true}
+        select_knob: {type: cc, control: 21, field: value,    feedback: false, dec: 65, inc: 1}
+        select:      {type: note,  note: 29, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 21, field: velocity, feedback: true, binary: true}
+
+    -   fader:       {type: pw, channel: 6,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 110,field: velocity, lock: true}
+        select_knob: {type: cc, control: 22, field: value,    feedback: false, dec: 65, inc: 1}
+        select:      {type: note,  note: 30, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 22, field: velocity, feedback: true, binary: true}
+
+    -   fader:       {type: pw, channel: 7,  field: pitch,    feedback: confirm, min: -8192, max: 8188}
+        fader_touch: {type: note,  note: 111,field: velocity, lock: true}
+        select_knob: {type: cc, control: 23, field: value,    feedback: false, dec: 1, inc: 65}
+        select:      {type: note,  note: 31, field: velocity, feedback: true, binary: true}
+        mute:        {type: note,  note: 23, field: velocity, feedback: true, binary: true}
