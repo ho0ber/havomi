@@ -1,0 +1,47 @@
+display_name: Behringer X-Touch Extender
+device_names:
+  input: X-Touch-Ext X-TOUCH_INT
+  output: X-Touch-Ext X-TOUCH_INT
+
+control_groups:
+  - name: main
+    controls:
+    -   fader:       {type: cc, channel: 70, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 80, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 32, feedback: true}
+        mute:        {type: note, value: 24, feedback: true}
+
+    -   fader:       {type: cc, channel: 71, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 81, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 33, feedback: true}
+        mute:        {type: note, value: 25, feedback: true}
+
+    -   fader:       {type: cc, channel: 72, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 82, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 34, feedback: true}
+        mute:        {type: note, value: 26, feedback: true}
+
+    -   fader:       {type: cc, channel: 73, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 83, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 35, feedback: true}
+        mute:        {type: note, value: 27, feedback: true}
+
+    -   fader:       {type: cc, channel: 74, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 84, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 36, feedback: true}
+        mute:        {type: note, value: 28, feedback: true}
+
+    -   fader:       {type: cc, channel: 75, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 85, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 37, feedback: true}
+        mute:        {type: note, value: 29, feedback: true}
+
+    -   fader:       {type: cc, channel: 76, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 86, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 38, feedback: true}
+        mute:        {type: note, value: 30, feedback: true}
+
+    -   fader:       {type: cc, channel: 77, feedback: true, min: 0, max: 127}
+        select_knob: {type: cc, channel: 87, feedback: true, dec: 1, inc: 65}
+        select:      {type: note, value: 39, feedback: true}
+        mute:        {type: note, value: 31, feedback: true}

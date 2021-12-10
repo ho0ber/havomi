@@ -1,2 +1,3 @@
 mido==1.2.10
-pygame==2.1.0
+python-rtmidi==1.4.9
+PyYAML==6.0

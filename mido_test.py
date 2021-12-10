@@ -1,13 +1,10 @@
 import mido
 from dataclasses import dataclass
 
-
-
 @dataclass
 class Column:
     knob: int
     fader: int
-
 
 names = mido.get_input_names()
 print(names)
