@@ -1,7 +1,6 @@
 from collections import defaultdict
 import yaml
 import mido
-import time
 
 class Device(object):
     def __init__(self, filename):
@@ -78,36 +77,13 @@ class Device(object):
             print(f"{found['element']} {found['index']} got an event: {val}")
             if conf.get("feedback") == "confirm":
                 kwargs = {k:conf[k] for k in ["channel","note","control"] if k in conf}
-                kwargs[conf["field"]] = min((val+500),conf.get("max"))
+                kwargs[conf["field"]] = min((val),conf.get("max"))
                 self.event_queue[found["index"]].append(mido.Message(self.inflate(conf["type"]), **kwargs))
             if conf.get("lock") and val == 0:
                 out_msg = self.event_queue[found["index"]].pop()
                 print(f"Sending: {out_msg}")
                 self.out_port.send(out_msg)
                 del self.event_queue[found["index"]]
-
-    # def dance(self):
-    #     for group in self.config["control_groups"]:
-    #         for control in group["controls"]:
-    #             for element,conf in control.items():
-    #                 if conf.get("feedback") == "confirm":
-    #                     max_val = conf.get("max", 127)
-    #                     min_val = conf.get("min", 0)
-    #                     if conf.get("binary") == True:
-    #                         r = [0,127,0]
-    #                     else:
-    #                         r = [min_val, max_val, min_val]
-
-    #                     s = 0.20
-
-    #                     for i in r:
-    #                         kwargs = {k:conf[k] for k in ["channel","note","control"] if k in conf}
-    #                         kwargs[conf["field"]] = i
-    #                         msg = mido.Message(self.inflate(conf["type"]), **kwargs)
-    #                         print(f"Sending: {msg}")
-    #                         self.out_port.send(msg)
-    #                         time.sleep(s)
-
 
     def listen(self):
         # self.dance()
