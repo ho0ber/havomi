@@ -1,17 +1,38 @@
 import multiprocessing
 import pathlib
 
-from device import Device
 import midi_listener
 import system_listener
 import event_handler
+from device import Device
+from channel import Channel
+from channel_map import ChannelMap
 
 DIR = pathlib.Path(__file__).parent.parent.resolve()
 DEVICES = DIR.joinpath("devices")
 
+def init_channels(dev):
+    channel_map = ChannelMap([
+        Channel(cid=0, name="Spotify", color="green",   level=0, dev_binding=dev.device_channels[0], target=None),
+        Channel(cid=1, name="Chrome",  color="red",     level=0, dev_binding=dev.device_channels[1], target=None),
+        Channel(cid=2, name="Discord", color="blue",    level=0, dev_binding=dev.device_channels[2], target=None),
+        Channel(cid=3, name="Plex",    color="yellow",  level=0, dev_binding=dev.device_channels[3], target=None),
+        Channel(cid=4, name="Apex",    color="cyan",    level=0, dev_binding=dev.device_channels[4], target=None),
+        Channel(cid=5, name="StarC",   color="magenta", level=0, dev_binding=dev.device_channels[5], target=None),
+        Channel(cid=6, name="Unused",  color="black",   level=0, dev_binding=dev.device_channels[6], target=None),
+        Channel(cid=7, name="Master",  color="white",   level=0, dev_binding=dev.device_channels[7], target=None),
+    ])
+
+    for channel in channel_map.channels.values():
+        dev.out_port.send(channel.update_scribble())
+        dev.out_port.send(channel.update_level())
+        dev.out_port.send(channel.update_fader())
+
+    return channel_map
 
 if __name__ == "__main__":
     dev = Device(DEVICES.joinpath("xte.yaml"))
+    channel_map = init_channels(dev)
     # dev.listen()
     event_queue = multiprocessing.Queue()
     midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue,))
@@ -19,6 +40,6 @@ if __name__ == "__main__":
 
     midi_listener_process.start()
     system_listener_process.start()
-    event_handler.start(event_queue, dev)
+    event_handler.start(event_queue, dev, channel_map)
     midi_listener_process.join()
     system_listener_process.join()
