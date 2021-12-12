@@ -3,45 +3,54 @@ device_names:
   input: X-Touch-Ext X-TOUCH_INT
   output: X-Touch-Ext X-TOUCH_INT
 
-control_groups:
+groups:
   - name: main
-    controls:
-    -   fader:       {type: cc, control: 70, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 80, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 32, field: velocity, feedback: true}
-        mute:        {type: note,  note: 24, field: velocity, feedback: true}
-
-    -   fader:       {type: cc, control: 71, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 81, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 33, field: velocity, feedback: true}
-        mute:        {type: note,  note: 25, field: velocity, feedback: true}
-
-    -   fader:       {type: cc, control: 72, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 82, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 34, field: velocity, feedback: true}
-        mute:        {type: note,  note: 26, field: velocity, feedback: true}
-
-    -   fader:       {type: cc, control: 73, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 83, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 35, field: velocity, feedback: true}
-        mute:        {type: note,  note: 27, field: velocity, feedback: true}
-
-    -   fader:       {type: cc, control: 74, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 84, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 36, field: velocity, feedback: true}
-        mute:        {type: note,  note: 28, field: velocity, feedback: true}
-
-    -   fader:       {type: cc, control: 75, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 85, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 37, field: velocity, feedback: true}
-        mute:        {type: note,  note: 29, field: velocity, feedback: true}
-
-    -   fader:       {type: cc, control: 76, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 86, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 38, field: velocity, feedback: true}
-        mute:        {type: note,  note: 30, field: velocity, feedback: true}
-
-    -   fader:       {type: cc, control: 77, field: value,    feedback: true, min: 0, max: 127}
-        select_knob: {type: cc, control: 87, field: value,    feedback: true, dec: 1, inc: 65}
-        select:      {type: note,  note: 39, field: velocity, feedback: true}
-        mute:        {type: note,  note: 31, field: velocity, feedback: true}
+    channels:
+    - cid: 0
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 70, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 80, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 32, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 24, fb: true}
+    - cid: 1
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 71, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 81, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 33, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 25, fb: true}
+    - cid: 2
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 72, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 82, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 34, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 26, fb: true}
+    - cid: 3
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 73, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 83, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 35, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 27, fb: true}
+    - cid: 4
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 74, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 84, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 36, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 28, fb: true}
+    - cid: 5
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 75, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 85, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 37, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 29, fb: true}
+    - cid: 6
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 76, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 86, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 38, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 30, fb: true}
+    - cid: 7
+      controls:
+      - {label: fader,  type: fader,  mtype: cc,   mid: 77, fb: true, min: 0, max: 127}
+      - {label: knob,   type: knob,   mtype: cc,   mid: 87, fb: true, dec: 1, inc: 65}
+      - {label: select, type: button, mtype: note, mid: 39, fb: true}
+      - {label: mute,   type: button, mtype: note, mid: 31, fb: true}

@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from dataclasses import dataclass, field
 from collections import namedtuple
 import mido
+from device import DeviceChannel
+from target import Target
 from scribble import scribble
 
 MapEntry = namedtuple("MapEntry",["type", "channel"])
@@ -12,14 +13,8 @@ class Channel:
     name: str
     level: int
     color: str
-    fid: int
-    kid: int
-    lid: int
-    # todo:
-    # dev_binding: DeviceChannel
-    # target_binding: Target
-
-    COLORS=["black","white","red","green","yellow","blue","cyan","magenta"]
+    dev_binding: DeviceChannel
+    target: Target
 
     def update_scribble(self):
         return scribble(self.cid, color=self.color, top=self.name, bottom=self.level, inv_bot=True)
@@ -31,9 +26,10 @@ class Channel:
         return mido.Message("control_change",control=self.lid,value=self.level)
 
     def change_color(self, inc):
-        cur_index = self.COLORS.index(self.color)
+        colors = ["black","white","red","green","yellow","blue","cyan","magenta"]
+        cur_index = colors.index(self.color)
         new_index = (cur_index+inc)%8
-        self.color = self.COLORS[new_index]
+        self.color = colors[new_index]
 
 # @dataclass
 class ChannelMap(object):
