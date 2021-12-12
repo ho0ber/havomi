@@ -1,7 +1,7 @@
 import multiprocessing
 import pathlib
 
-# from device import Device
+from device import Device
 import midi_listener
 import system_listener
 import event_handler

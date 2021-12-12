@@ -1,8 +1,11 @@
 from dataclasses import dataclass, field
 import yaml
+import mido
 
 @dataclass
 class Control:
+    type: str
+    label: str
     midi_type: str
     midi_id_field: str
     midi_id: int
@@ -25,9 +28,18 @@ class Button(Control):
     up_value: int = 0
 
 @dataclass
+class Meter(Control):
+    pass
+
+@dataclass
 class DeviceChannel:
     cid: int
     controls: field(default_factory=list)
+
+    def find_control(self, label):
+        for control in self.controls:
+            if control.label == label:
+                return control
 
 class Device(object):
     def __init__(self, filename):
@@ -36,7 +48,7 @@ class Device(object):
         self.name = self.config["display_name"]
         self.device_channels = self.build_channels()
         # self.in_port = mido.open_input(self.config["device_names"]["input"])
-        # self.out_port = mido.open_output(self.config["device_names"]["output"])        
+        self.out_port = mido.open_output(self.config["device_names"]["output"])
 
     def build_channels(self):
         channels = []
@@ -54,6 +66,8 @@ class Device(object):
                 mtype = self.inflate(conf["mtype"])
                 m_id_field,m_val_field = self.look_up_fields(mtype)
                 return Fader(
+                    type=conf["type"],
+                    label=conf["label"],
                     midi_type=mtype,
                     midi_id_field=m_id_field,
                     midi_id=conf["mid"],
@@ -66,6 +80,8 @@ class Device(object):
                 mtype = self.inflate(conf["mtype"])
                 m_id_field,m_val_field = self.look_up_fields(mtype)
                 return RotaryEncoder(
+                    type=conf["type"],
+                    label=conf["label"],
                     midi_type=mtype,
                     midi_id_field=m_id_field,
                     midi_id=conf["mid"],
@@ -78,6 +94,20 @@ class Device(object):
                 mtype = self.inflate(conf["mtype"])
                 m_id_field,m_val_field = self.look_up_fields(mtype)
                 return Button(
+                    type=conf["type"],
+                    label=conf["label"],
+                    midi_type=mtype,
+                    midi_id_field=m_id_field,
+                    midi_id=conf["mid"],
+                    midi_value_field=m_val_field,
+                    feedback=conf["fb"],
+                )
+            case "meter":
+                mtype = self.inflate(conf["mtype"])
+                m_id_field,m_val_field = self.look_up_fields(mtype)
+                return Meter(
+                    type=conf["mtype"],
+                    label=conf["label"],
                     midi_type=mtype,
                     midi_id_field=m_id_field,
                     midi_id=conf["mid"],

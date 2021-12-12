@@ -25,7 +25,7 @@ def start(event_queue, dev):
 
     while True:
         event_type,event = event_queue.get()
-        print(f"got event: {event}")
+        # print(f"got event: {event}")
         if event_type == "midi":
             match, value = channel_map.lookup(event)
             if match is not None:

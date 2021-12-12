@@ -20,10 +20,24 @@ class Channel:
         return scribble(self.cid, color=self.color, top=self.name, bottom=self.level, inv_bot=True)
 
     def update_fader(self):
-        return mido.Message("control_change",control=self.fid,value=self.level)
+        d = self.dev_binding
+        c = d.find_control("fader")
+        if c.feedback:
+            kwargs = {
+                c.midi_id_field: c.midi_id,
+                c.midi_value_field: self.level
+            }
+            return mido.Message(c.midi_type,**kwargs)
 
     def update_level(self):
-        return mido.Message("control_change",control=self.lid,value=self.level)
+        d = self.dev_binding
+        c = d.find_control("level")
+        if c.feedback:
+            kwargs = {
+                c.midi_id_field: c.midi_id,
+                c.midi_value_field: self.level
+            }
+            return mido.Message(c.midi_type,**kwargs)
 
     def change_color(self, inc):
         colors = ["black","white","red","green","yellow","blue","cyan","magenta"]
@@ -44,14 +58,17 @@ class ChannelMap(object):
 
     def build_map(self):
         for channel in self.channels.values():
-            self.cmap[f"control_change:{channel.fid}"] = MapEntry(type="fader", channel=channel)
-            self.cmap[f"control_change:{channel.kid}"] = MapEntry(type="knob", channel=channel)
+            for control in channel.dev_binding.controls:
+                self.cmap[f"{control.midi_type}:{control.midi_id}"] = MapEntry(type=control.type, channel=channel)
 
     def lookup(self, msg):
         match msg.type:
             case "control_change":
                 key = f"{msg.type}:{msg.control}"
                 value = msg.value
+            case "note_on":
+                key = f"{msg.type}:{msg.note}"
+                value = msg.velocity
             case _:
                 key = None
                 value = None
