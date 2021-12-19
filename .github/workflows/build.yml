@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      run: |
+        git clone https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git --single-branch --branch ${GITHUB_REF##*/} code
+    - name: Install requirements
+      run: |
+        cd code
+        pip3 install -r requirements.txt
+    - name: Build pyinstaller
+      run: |
+        cd code
+        pyinstaller main.spec --noconfirm
+    - name: Zip directory
+      run: |
+        apt install zip
+        zip -r havomi.zip code/dist/main
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v2
+      with:
+        name: havomi
+        path: havomi.zip
+        retention-days: 5
