@@ -1,12 +1,12 @@
 import multiprocessing
 import pathlib
 
-import midi_listener
-import system_listener
-import event_handler
-from device import Device
-from channel import Channel
-from channel_map import ChannelMap
+import havomi.midi_listener as midi_listener
+import havomi.system_listener as system_listener
+import havomi.event_handler as event_handler
+from havomi.device import Device
+from havomi.channel import Channel
+from havomi.channel_map import ChannelMap
 
 DIR = pathlib.Path(__file__).parent.parent.resolve()
 DEVICES = DIR.joinpath("devices")

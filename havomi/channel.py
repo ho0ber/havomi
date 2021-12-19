@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 import mido
 
-from device import DeviceChannel
-from target import Target
-from scribble import scribble
+from havomi.device import DeviceChannel
+from havomi.target import Target
+from havomi.scribble import scribble
 
 @dataclass
 class Channel:

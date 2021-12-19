@@ -1,7 +1,8 @@
 import yaml
 import mido
-from controls import *
-from device_channel import DeviceChannel
+import time
+from havomi.controls import *
+from havomi.device_channel import DeviceChannel
 
 class Device(object):
     def __init__(self, filename):
@@ -9,8 +10,25 @@ class Device(object):
             self.config = yaml.safe_load(device_file.read())
         self.name = self.config["display_name"]
         self.device_channels = self.build_channels()
+        self.in_name = self.config["device_names"]["input"]
+        self.out_name = self.config["device_names"]["output"]
         # self.in_port = mido.open_input(self.config["device_names"]["input"])
-        self.out_port = mido.open_output(self.config["device_names"]["output"])
+        self.out_port = self.open_out_port()
+
+    def open_out_port(self):
+        out_port = None
+        while out_port is None:
+            try:
+                out_port = mido.open_output(self.config["device_names"]["output"])
+            except OSError as e:
+                if self.out_name in str(e):
+                    print(f"Couldn't connect to midi device to to send: {e}")
+                    print("Retrying in 5 seconds")
+                    time.sleep(5)
+                else:
+                    print(e)
+                    break
+        return out_port
 
     def build_channels(self):
         channels = []
