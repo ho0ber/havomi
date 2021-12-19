@@ -1,3 +1,4 @@
 #!/bin/sh
 
-pyinstaller main.spec --noconfirm && dist/main/main
+pyinstaller main.spec --noconfirm
+# to run, dist/main/main
