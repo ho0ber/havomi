@@ -12,7 +12,10 @@ jobs:
     - name: Checkout code
       run: |
         git clone https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git --single-branch --branch ${GITHUB_REF##*/} code
-    - name: Install requirements
+    - name: Install system requirements
+      run: |
+        apt-get install libasound2-dev zip
+    - name: Install python requirements
       run: |
         cd code
         pip3 install -r requirements.txt
@@ -22,7 +25,6 @@ jobs:
         pyinstaller main.spec --noconfirm
     - name: Zip directory
       run: |
-        apt install zip
         zip -r havomi.zip code/dist/main
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
