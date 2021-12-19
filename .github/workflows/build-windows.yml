@@ -26,8 +26,10 @@ jobs:
       uses: JackMcKew/pyinstaller-action-windows@main
       with:
         path: code
-
+    - name: List the tree
+      run: |
+        tree code
     - uses: actions/upload-artifact@v2
       with:
         name: name-of-artifact
-        path: src/dist/windows
+        path: code/dist/windows
