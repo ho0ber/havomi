@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - '*'
+      - "never" # this one is busted
 
 jobs:
   build:
