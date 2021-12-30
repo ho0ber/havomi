@@ -26,7 +26,7 @@ jobs:
         python -m pip install nuitka zstandard
     - name: Make OneFile
       run: |
-        nuitka --assume-yes-for-downloads --verbose --no-progress --include-data-file="./devices=./devices" --onefile -o havomi.exe main.py
+        nuitka --assume-yes-for-downloads --verbose --no-progress --include-data-dir="devices=devices" --onefile -o havomi.exe main.py
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
