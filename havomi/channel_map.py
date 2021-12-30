@@ -14,15 +14,14 @@ class ChannelMap(object):
                 self.cmap[f"{control.midi_type}:{control.midi_id}"] = MapEntry(type=control.type, channel=channel)
 
     def lookup(self, msg):
-        match msg.type:
-            case "control_change":
-                key = f"{msg.type}:{msg.control}"
-                value = msg.value
-            case "note_on":
-                key = f"{msg.type}:{msg.note}"
-                value = msg.velocity
-            case _:
-                key = None
-                value = None
+        if msg.type == "control_change":
+            key = f"{msg.type}:{msg.control}"
+            value = msg.value
+        elif msg.type == "note_on":
+            key = f"{msg.type}:{msg.note}"
+            value = msg.velocity
+        else:
+            key = None
+            value = None
         
         return self.cmap.get(key), value

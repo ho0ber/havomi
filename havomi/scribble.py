@@ -2,25 +2,24 @@ import mido
 
 def lookup_color(color, inv_top, inv_bot):
     offset = inv_top*16 + inv_bot*32
-    match color.lower():
-        case ("black"):
-            return 0 + offset
-        case ("red" | "r"):
-            return 1 + offset
-        case ("green" | "g"):
-            return 2 + offset
-        case ("yellow" | "y"):
-            return 3 + offset
-        case ("blue" | "b"):
-            return 4 + offset
-        case ("magenta" | "m"):
-            return 5 + offset
-        case ("cyan" | "c"):
-            return 6 + offset
-        case ("white" | "w"):
-            return 7 + offset
-        case _:
-            return 0 + offset
+    if color.lower() == "black":
+        return 0 + offset
+    elif color.lower() in ("red", "r"):
+        return 1 + offset
+    elif color.lower() in ("green", "g"):
+        return 2 + offset
+    elif color.lower() in ("yellow", "y"):
+        return 3 + offset
+    elif color.lower() in ("blue", "b"):
+        return 4 + offset
+    elif color.lower() in ("magenta", "m"):
+        return 5 + offset
+    elif color.lower() in ("cyan", "c"):
+        return 6 + offset
+    elif color.lower() in ("white", "w"):
+        return 7 + offset
+    else:
+        return 0 + offset
 
 def scribble(channel, color="black", top="", bottom="", inv_top=False, inv_bot=False, msg=True):
     # start = [0xF0]
