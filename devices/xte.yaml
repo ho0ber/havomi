@@ -1,7 +1,7 @@
 display_name: Behringer X-Touch Extender
 device_names:
-  input: X-Touch-Ext X-TOUCH_INT
-  output: X-Touch-Ext X-TOUCH_INT
+  input: X-Touch-Ext 0 # on mac: X-Touch-Ext X-TOUCH_INT
+  output: X-Touch-Ext 1 # on mac X-Touch-Ext X-TOUCH_INT
 
 groups:
   - name: main

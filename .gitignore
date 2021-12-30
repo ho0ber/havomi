@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# nuitka builds
+*.build
+*.dist
+*.onefile-build
+*.exe

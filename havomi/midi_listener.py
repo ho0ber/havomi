@@ -1,4 +1,5 @@
 import mido
+import mido.backends.rtmidi
 import time
 
 def start(event_queue, dev_name):

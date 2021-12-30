@@ -1,4 +1,5 @@
 import mido
+import mido.backends.rtmidi
 
 def lookup_color(color, inv_top, inv_bot):
     offset = inv_top*16 + inv_bot*32

@@ -1,5 +1,6 @@
 import yaml
 import mido
+import mido.backends.rtmidi
 import time
 from havomi.controls import *
 from havomi.device_channel import DeviceChannel

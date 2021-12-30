@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import mido
+import mido.backends.rtmidi
 
 from havomi.device import DeviceChannel
 from havomi.target import Target
