@@ -41,76 +41,73 @@ class Device(object):
         return channels
     
     def build_control(self, conf):
-        match conf["type"]:
-            case "fader":
-                mtype = self.inflate(conf["mtype"])
-                m_id_field,m_val_field = self.look_up_fields(mtype)
-                return Fader(
-                    type=conf["type"],
-                    label=conf["label"],
-                    midi_type=mtype,
-                    midi_id_field=m_id_field,
-                    midi_id=conf["mid"],
-                    midi_value_field=m_val_field,
-                    feedback=conf["fb"],
-                    midi_value_min=conf["min"],
-                    midi_value_max=conf["max"]
-                )
-            case "knob":
-                mtype = self.inflate(conf["mtype"])
-                m_id_field,m_val_field = self.look_up_fields(mtype)
-                return RotaryEncoder(
-                    type=conf["type"],
-                    label=conf["label"],
-                    midi_type=mtype,
-                    midi_id_field=m_id_field,
-                    midi_id=conf["mid"],
-                    midi_value_field=m_val_field,
-                    feedback=conf["fb"],
-                    increment_value=conf["inc"],
-                    decrement_value=conf["dec"]
-                )
-            case "button":
-                mtype = self.inflate(conf["mtype"])
-                m_id_field,m_val_field = self.look_up_fields(mtype)
-                return Button(
-                    type=conf["type"],
-                    label=conf["label"],
-                    midi_type=mtype,
-                    midi_id_field=m_id_field,
-                    midi_id=conf["mid"],
-                    midi_value_field=m_val_field,
-                    feedback=conf["fb"],
-                )
-            case "meter":
-                mtype = self.inflate(conf["mtype"])
-                m_id_field,m_val_field = self.look_up_fields(mtype)
-                return Meter(
-                    type=conf["mtype"],
-                    label=conf["label"],
-                    midi_type=mtype,
-                    midi_id_field=m_id_field,
-                    midi_id=conf["mid"],
-                    midi_value_field=m_val_field,
-                    feedback=conf["fb"],
-                )
+        if conf["type"] == "fader":
+            mtype = self.inflate(conf["mtype"])
+            m_id_field,m_val_field = self.look_up_fields(mtype)
+            return Fader(
+                type=conf["type"],
+                label=conf["label"],
+                midi_type=mtype,
+                midi_id_field=m_id_field,
+                midi_id=conf["mid"],
+                midi_value_field=m_val_field,
+                feedback=conf["fb"],
+                midi_value_min=conf["min"],
+                midi_value_max=conf["max"]
+            )
+        elif conf["type"] == "knob":
+            mtype = self.inflate(conf["mtype"])
+            m_id_field,m_val_field = self.look_up_fields(mtype)
+            return RotaryEncoder(
+                type=conf["type"],
+                label=conf["label"],
+                midi_type=mtype,
+                midi_id_field=m_id_field,
+                midi_id=conf["mid"],
+                midi_value_field=m_val_field,
+                feedback=conf["fb"],
+                increment_value=conf["inc"],
+                decrement_value=conf["dec"]
+            )
+        elif conf["type"] == "button":
+            mtype = self.inflate(conf["mtype"])
+            m_id_field,m_val_field = self.look_up_fields(mtype)
+            return Button(
+                type=conf["type"],
+                label=conf["label"],
+                midi_type=mtype,
+                midi_id_field=m_id_field,
+                midi_id=conf["mid"],
+                midi_value_field=m_val_field,
+                feedback=conf["fb"],
+            )
+        elif conf["type"] == "meter":
+            mtype = self.inflate(conf["mtype"])
+            m_id_field,m_val_field = self.look_up_fields(mtype)
+            return Meter(
+                type=conf["mtype"],
+                label=conf["label"],
+                midi_type=mtype,
+                midi_id_field=m_id_field,
+                midi_id=conf["mid"],
+                midi_value_field=m_val_field,
+                feedback=conf["fb"],
+            )
 
     def inflate(self, event_type):
-        match event_type:
-            case "pw":
-                return "pitchwheel"
-            case "note":
-                return "note_on"
-            case "cc":
-                return "control_change"
-            case _:
-                return event_type
+        if event_type == "pw":
+            return "pitchwheel"
+        elif event_type == "note":
+            return "note_on"
+        elif event_type == "cc":
+            return "control_change"
+        else:
+            return event_type
 
     def look_up_fields(self, mtype):
-        match mtype:
-            case "control_change":
-                return "control","value"
-            case "note_on":
-                return "note","velocity"
-            case "pitchwheel":
-                return "channel","pitch"
+        if mtype ==  "control_change":
+            return "control","value"
+        elif mtype == "note_on":
+            return "note","velocity"
+        elif mtype == "pitchwheel":
+            return "channel","pitch"
