@@ -6,13 +6,16 @@ from havomi.controls import *
 from havomi.device_channel import DeviceChannel
 
 class Device(object):
-    def __init__(self, filename):
+    def __init__(self, dev_info):
+        self.in_name = dev_info["input"]
+        self.out_name = dev_info["output"]
+        filename = dev_info["device"]
         with open(filename) as device_file:
             self.config = yaml.safe_load(device_file.read())
         self.name = self.config["display_name"]
         self.device_channels = self.build_channels()
-        self.in_name = self.config["device_names"]["input"]
-        self.out_name = self.config["device_names"]["output"]
+        # self.in_name = self.config["device_names"]["input"]
+        # self.out_name = self.config["device_names"]["output"]
         # self.in_port = mido.open_input(self.config["device_names"]["input"])
         self.out_port = self.open_out_port()
 

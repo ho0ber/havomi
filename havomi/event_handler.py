@@ -17,6 +17,9 @@ def start(event_queue, dev, channel_map):
                     dev.out_port.send(match.channel.update_scribble())
                     dev.out_port.send(match.channel.update_level())
                     dev.out_port.send(match.channel.update_fader())
+                elif match.type == "button":
+                    if match.channel.target.ttype == "master":
+                        break
 
         if event_type == "system":
             cid,level = event["channel"], event["level"]
