@@ -2,12 +2,12 @@
 def start(event_queue, dev, channel_map):
     while True:
         event_type,event = event_queue.get()
-        # print(f"got event: {event}")
         if event_type == "midi":
             match, value = channel_map.lookup(event)
             if match is not None:
                 if match.type == "fader":
                     match.channel.level = value
+                    match.channel.update_target_volume()
                     dev.out_port.send(match.channel.update_scribble())
                     dev.out_port.send(match.channel.update_level())
                 elif match.type == "knob":

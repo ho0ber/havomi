@@ -43,3 +43,13 @@ class Channel:
         cur_index = colors.index(self.color)
         new_index = (cur_index+inc)%8
         self.color = colors[new_index]
+
+    def set_level_from_float(self, value):
+        prelim_level = 127*value
+        self.level = int(prelim_level) if prelim_level >= 0 else 0
+
+    def get_level_from_target(self):
+        self.set_level_from_float(self.target.session.SimpleAudioVolume.GetMasterVolume())
+
+    def update_target_volume(self):
+        self.target.session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
