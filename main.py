@@ -36,6 +36,8 @@ def init_channels(dev):
     #     channel.target = Target(channel.name, "application", session)
     #     channel.get_level_from_target()
 
+    channel_map.last().set_master()
+
     for channel in channel_map.channels.values():
         dev.out_port.send(channel.update_scribble())
         dev.out_port.send(channel.update_level())

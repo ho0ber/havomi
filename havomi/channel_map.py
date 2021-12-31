@@ -25,3 +25,6 @@ class ChannelMap(object):
             value = None
         
         return self.cmap.get(key), value
+    
+    def last(self):
+        return self.channels[max(self.channels.keys())]

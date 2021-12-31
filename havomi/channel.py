@@ -2,7 +2,9 @@ from dataclasses import dataclass
 import hashlib
 import mido
 import mido.backends.rtmidi
-from pycaw.pycaw import AudioUtilities
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 from havomi.device import DeviceChannel
 from havomi.target import Target
@@ -54,7 +56,10 @@ class Channel:
         self.set_level_from_float(self.target.session.SimpleAudioVolume.GetMasterVolume())
 
     def update_target_volume(self):
-        self.target.session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
+        if self.target.ttype == "application":
+            self.target.session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
+        elif self.target.ttype == "master":
+            self.target.session.SetMasterVolumeLevelScalar(self.level/127, None)
 
     def set_target_from_session(self, session):
         self.name = session.Process.name() if session.Process else "?"
@@ -99,3 +104,17 @@ class Channel:
             else:
                 self.set_target_from_session(sessions[pos])
 
+    def set_master(self):
+        devices = AudioUtilities.GetSpeakers()
+        interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        volume = cast(interface, POINTER(IAudioEndpointVolume))
+        # volume.GetMute()
+        # volume.GetMasterVolumeLevel()
+        # volume.GetVolumeRange()
+        # volume.SetMasterVolumeLevel(-20.0, None)
+        self.name = "Master"
+        self.target = Target(self.name, "master", volume)
+        self.color = "white"
+        self.level = int(volume.GetMasterVolumeLevelScalar()*127)
+        print(self.level)
+    
