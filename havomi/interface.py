@@ -52,20 +52,22 @@ def get_config():
 
     questions = []
     if input_dev is None or input_dev not in inputs:
+        input_dev = None
         questions.append({
             'type': 'list',
             'name': 'input',
             'message': 'Choose your input device',
             'choices': inputs
         })
+
     if output_dev is None or output_dev not in outputs:
+        output_dev = None
         questions.append({
             'type': 'list',
             'name': 'output',
             'message': 'Choose your output device',
             'choices': outputs
         })
-
 
     answers = prompt(questions) if questions else {}
     if input_dev:
