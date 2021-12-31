@@ -5,7 +5,7 @@ class DeviceChannel:
     cid: int
     controls: field(default_factory=list)
 
-    def find_control(self, label):
+    def find_control(self, func):
         for control in self.controls:
-            if control.label == label:
+            if control.func == func:
                 return control

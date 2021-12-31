@@ -50,7 +50,7 @@ class Device(object):
             m_id_field,m_val_field = self.look_up_fields(mtype)
             return Fader(
                 type=conf["type"],
-                label=conf["label"],
+                func=conf["func"],
                 midi_type=mtype,
                 midi_id_field=m_id_field,
                 midi_id=conf["mid"],
@@ -64,7 +64,7 @@ class Device(object):
             m_id_field,m_val_field = self.look_up_fields(mtype)
             return RotaryEncoder(
                 type=conf["type"],
-                label=conf["label"],
+                func=conf["func"],
                 midi_type=mtype,
                 midi_id_field=m_id_field,
                 midi_id=conf["mid"],
@@ -78,7 +78,7 @@ class Device(object):
             m_id_field,m_val_field = self.look_up_fields(mtype)
             return Button(
                 type=conf["type"],
-                label=conf["label"],
+                func=conf["func"],
                 midi_type=mtype,
                 midi_id_field=m_id_field,
                 midi_id=conf["mid"],
@@ -90,7 +90,7 @@ class Device(object):
             m_id_field,m_val_field = self.look_up_fields(mtype)
             return Meter(
                 type=conf["mtype"],
-                label=conf["label"],
+                func=conf["func"],
                 midi_type=mtype,
                 midi_id_field=m_id_field,
                 midi_id=conf["mid"],

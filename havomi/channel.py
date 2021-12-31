@@ -24,7 +24,7 @@ class Channel:
 
     def update_fader(self):
         d = self.dev_binding
-        c = d.find_control("fader")
+        c = d.find_control("volume")
         if c.feedback:
             kwargs = {
                 c.midi_id_field: c.midi_id,
@@ -108,13 +108,8 @@ class Channel:
         devices = AudioUtilities.GetSpeakers()
         interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
         volume = cast(interface, POINTER(IAudioEndpointVolume))
-        # volume.GetMute()
-        # volume.GetMasterVolumeLevel()
-        # volume.GetVolumeRange()
-        # volume.SetMasterVolumeLevel(-20.0, None)
         self.name = "Master"
         self.target = Target(self.name, "master", volume)
         self.color = "white"
         self.level = int(volume.GetMasterVolumeLevelScalar()*127)
-        print(self.level)
     

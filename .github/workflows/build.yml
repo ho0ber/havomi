@@ -1,34 +1,34 @@
-name: Build
+name: Python package
 
-on:
-  push:
-    branches:
-      - "never" # this one is busted
+on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  Windows-Build:
+
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+
     steps:
-    - name: Checkout code
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
       run: |
-        git clone https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git --single-branch --branch ${GITHUB_REF##*/} code
-    - name: Install system requirements
+        python -m pip install --upgrade pip
+        python -m pip install pytest wheel
+        python -m pip install -r requirements.txt
+        python -m pip install nuitka zstandard
+    - name: Make OneFile
       run: |
-        sudo apt-get install libasound2-dev zip
-    - name: Install python requirements
-      run: |
-        cd code
-        pip3 install -r requirements.txt
-    - name: Build pyinstaller
-      run: |
-        cd code
-        pyinstaller main.spec --noconfirm
-    - name: Zip directory
-      run: |
-        zip -r havomi.zip code/dist/main
-    - name: 'Upload Artifact'
+        nuitka --assume-yes-for-downloads --verbose --no-progress --include-data-dir="devices=devices" --enable-plugin=multiprocessing --onefile -o havomi.exe main.py
+    - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: havomi
-        path: havomi.zip
-        retention-days: 5
+          name: Windows-Binary
+          path: havomi.exe

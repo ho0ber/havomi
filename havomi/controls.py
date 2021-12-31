@@ -3,7 +3,7 @@ from dataclasses import dataclass
 @dataclass
 class Control:
     type: str
-    label: str
+    func: str
     midi_type: str
     midi_id_field: str
     midi_id: int
