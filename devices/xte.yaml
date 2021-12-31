@@ -1,6 +1,5 @@
 display_name: Behringer X-Touch Extender
 device_names:
-  # Currently not used in favor of manual selection
   windows:
     input: X-Touch-Ext 0
     output: X-Touch-Ext 1

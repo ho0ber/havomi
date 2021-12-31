@@ -23,7 +23,7 @@ class Device(object):
         out_port = None
         while out_port is None:
             try:
-                out_port = mido.open_output(self.config["device_names"]["output"])
+                out_port = mido.open_output(self.out_name)
             except OSError as e:
                 if self.out_name in str(e):
                     print(f"Couldn't connect to midi device to to send: {e}")
