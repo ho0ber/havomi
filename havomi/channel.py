@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+import hashlib
 import mido
 import mido.backends.rtmidi
+from pycaw.pycaw import AudioUtilities
 
 from havomi.device import DeviceChannel
 from havomi.target import Target
@@ -53,3 +55,47 @@ class Channel:
 
     def update_target_volume(self):
         self.target.session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
+
+    def set_target_from_session(self, session):
+        self.name = session.Process.name() if session.Process else "?"
+        self.target = Target(self.name, "application", session)
+        self.color = ["red","green","yellow","blue","cyan","magenta"][int(hashlib.md5(session.InstanceIdentifier.encode('utf-8')).hexdigest(),16)%6%6] if session.Process else "white"
+        self.get_level_from_target()
+
+    def unset_target(self):
+        self.target = None
+        self.name = "Unused"
+        self.color = "black"
+        self.level = 0
+    
+    def find_session(self, session_list):
+        if self.target is None:
+            return None
+        
+        for i,s in enumerate(session_list):
+            if self.target.session.InstanceIdentifier is None:
+                if s.InstanceIdentifier is None:
+                    return i
+            elif s.InstanceIdentifier == self.target.session.InstanceIdentifier:
+                return i
+        
+        return None
+
+
+    def change_target(self, inc):
+        sessions = AudioUtilities.GetAllSessions()
+        index = self.find_session(sessions)
+
+        if index is None:
+            if inc > 0:
+                self.set_target_from_session(sessions[0])
+            else:
+                self.set_target_from_session(sessions[-1])
+            
+        else:
+            pos = index + inc
+            if pos >= len(sessions) or pos < 0:
+                self.unset_target()
+            else:
+                self.set_target_from_session(sessions[pos])
+
