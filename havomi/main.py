@@ -16,6 +16,10 @@ if not DEVICES.is_dir():
     DEVICES = DIR.joinpath("devices")
 
 def init_channels(dev):
+    """
+    Initialize the Channels with basic mappings to the DeviceChannels. This will also configure
+    the last DeviceChannel to have the master system volume as a target by default.
+    """
     channel_map = ChannelMap([
         Channel(
             cid=i,
@@ -37,6 +41,13 @@ def init_channels(dev):
     return channel_map
 
 def start():
+    """
+    This is the primary entry point for the application. We're running multiprocessing here so we
+    can have totally separate processes listening for midi events and system events, all funneling
+    into a single event queue to be processed by the event_handler. Listeners are intended to be
+    "dumb" and not do significant processing in their processes, saving most filtering and
+    processing for the handler.
+    """
     multiprocessing.freeze_support()
 
     dev_info = get_config()

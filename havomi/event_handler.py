@@ -1,5 +1,11 @@
 
 def start(event_queue, dev, channel_map):
+    """
+    This is the main event handler loop. It listens to the multiprocessing event queue and reacts
+    to events based on basic rules. The intent is for this code to be static for all devices, and
+    for device config and application config (target bindings) to be the means by which we change
+    behaviors of various controls.
+    """
     while True:
         event_type,event = event_queue.get()
         if event_type == "midi":

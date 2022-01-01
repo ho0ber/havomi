@@ -8,6 +8,10 @@ import platform
 import yaml
 
 def get_device_file():
+    """
+    Asks the user for a device config yaml. It offers a list from the devices directory built-in,
+    but also allows for a user to input a path manually.
+    """
     devices_path = join(dirname(dirname(realpath(__file__))),"devices")
     devices = [x for x in listdir(devices_path) if x.endswith(".yaml")]
     questions = [
@@ -37,6 +41,10 @@ def get_device_file():
 
 
 def get_config():
+    """
+    Prompts the user on the command-line for a device config file and, if necessary, input and
+    output devices if the entries in the device config file don't match any connected midi devices.
+    """
     device_filename = get_device_file()
     os = platform.system()
 

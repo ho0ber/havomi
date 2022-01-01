@@ -12,17 +12,35 @@ from havomi.scribble import scribble
 
 @dataclass
 class Channel:
+    """
+    The Channel is the virtual object that binds a DeviceChannel to a Target. Channels and
+    DeviceChannels are distinct because we want a stored channel config to be portable betwween
+    devices.
+
+    cid:         Channel ID
+    name:        Display name
+    level:       Current volume level, 0-127
+    color:       RGB+CYM+White+Black
+    dev_binding: Channel in the device config
+    target:      Target application or device
+    """
     cid: int
-    name: str
+    name: str 
     level: int
     color: str
     dev_binding: DeviceChannel
     target: Target
 
     def update_scribble(self):
+        """
+        Returns a sysex message to update a scribble strip be sent via midi
+        """
         return scribble(self.cid, color=self.color, top=self.name, bottom=self.level, inv_bot=True)
 
     def update_fader(self):
+        """
+        Returns a midi message to update volume position
+        """
         d = self.dev_binding
         c = d.find_control("volume")
         if c.feedback:
@@ -33,6 +51,9 @@ class Channel:
             return mido.Message(c.midi_type,**kwargs)
 
     def update_level(self):
+        """
+        Returns a midi message to update volume meter
+        """
         d = self.dev_binding
         c = d.find_control("level")
         if c.feedback:
@@ -43,6 +64,10 @@ class Channel:
             return mido.Message(c.midi_type,**kwargs)
 
     def change_color(self, inc):
+        """
+        inc: 1 or -1 to represent direction
+        Changes the color of the channel
+        """
         colors = ["black","white","red","green","yellow","blue","cyan","magenta"]
         cur_index = colors.index(self.color)
         new_index = (cur_index+inc)%8

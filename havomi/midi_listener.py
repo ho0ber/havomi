@@ -3,6 +3,10 @@ import mido.backends.rtmidi
 import time
 
 def start(event_queue, dev_name):
+    """
+    This is the entry point for the midi listener process. It simply listens for all midi events
+    on the specified input device and sends them to the event handler via the event queue.
+    """
     while True:
         try:
             with mido.open_input(dev_name) as in_port:

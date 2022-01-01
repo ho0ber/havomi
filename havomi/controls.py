@@ -2,6 +2,9 @@ from dataclasses import dataclass
 
 @dataclass
 class Control:
+    """
+    Controls are the various controls on midi devices that are used for input and output.
+    """
     type: str
     func: str
     midi_type: str
