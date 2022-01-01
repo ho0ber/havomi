@@ -2,7 +2,7 @@ name: Compile Diagram
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   compile:
