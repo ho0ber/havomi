@@ -1,6 +1,9 @@
 # Havomi
 **Havomi** - **Ha**rdware **Vo**lume **Mi**xer
 
+### ⚠️ This project is still in the early stages. If you require a more stable tool, please use its predecessors, or consider one of the similar projects below. ⚠️
+
+## Description
 This is a rewrite of [NK2Tray](https://github.com/ho0ber/nk2tray), which is a rewrite of [nk2-audio](https://github.com/ho0ber/nk2-audio).
 
 For some backstory on why I am beginning yet another rewrite of the same project, here are the pros and cons of the three versions:
@@ -19,9 +22,6 @@ The goal of Havomi is to provide all of the same functionality as NK2Tray, but i
 An additional improvement planned for Havomi is significantly simplified device support configuration, through the use of verbose but straightforward YAML configs, rather than device configuration being written as code.
 
 The biggest advantage, by far, is that I will be able to personally contribute significantly more without significant effort. I'll be able to identify and fix many bugs without needing to change operating systems, and automated builds will enable quick release of bug fixes, even if I'm away from a Windows box.
-
-## Disclaimer
-This project is still in the early stages. If you require a more stable tool, please use its predecessors, or consider one of the similar projects below.
 
 ## Download
 To download a development build, **log in** to a github account and then go to the [Build executable actions page](https://github.com/ho0ber/havomi/actions/workflows/build.yml). Click the most recent completed workflow run and scroll to the bottom to find the Windows-Binary artifact, and download.
