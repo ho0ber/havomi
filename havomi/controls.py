@@ -18,6 +18,9 @@ class Fader(Control):
     midi_value_min: int
     midi_value_max: int
 
+    def normalize_level(self, value):
+        return int((value-self.midi_value_min)/(self.midi_value_max-self.midi_value_min)*127)
+
 @dataclass  
 class RotaryEncoder(Control):
     increment_value: int

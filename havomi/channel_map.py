@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-MapEntry = namedtuple("MapEntry",["func", "type", "control", "channel"])
+MapEntry = namedtuple("MapEntry",["control", "channel"])
 
 class ChannelMap(object):
     """
@@ -16,7 +16,8 @@ class ChannelMap(object):
     def build_map(self):
         for channel in self.channels.values():
             for control in channel.dev_binding.controls:
-                self.cmap[f"{control.midi_type}:{control.midi_id}"] = MapEntry(control=control, channel=channel)
+                if control.type != "meter":
+                    self.cmap[f"{control.midi_type}:{control.midi_id}"] = MapEntry(control=control, channel=channel)
 
     def lookup(self, msg):
         if msg.type == "control_change":
@@ -25,6 +26,9 @@ class ChannelMap(object):
         elif msg.type == "note_on":
             key = f"{msg.type}:{msg.note}"
             value = msg.velocity
+        elif msg.type == "pitchwheel":
+            key = f"{msg.type}:{msg.channel}"
+            value = msg.pitch
         else:
             key = None
             value = None

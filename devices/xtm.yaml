@@ -1,8 +1,8 @@
 display_name: Behringer X-Touch Mini
 device_names:
   windows:
-    input: X-Touch-Mini
-    output: X-Touch-Mini
+    input: X-TOUCH MINI
+    output: X-TOUCH MINI
 
 groups:
   - name: main
@@ -59,4 +59,5 @@ groups:
       default: master
       controls:
       - {func: volume, type: fader,  mtype: pw,   mid: 8,  fb: false, min: -8192, max: 8064}
+      - {func: select, type: button, mtype: note, mid: 85, fb: true}
 

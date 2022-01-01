@@ -31,14 +31,13 @@ def init_channels(dev):
         )
         for i in range(len(dev.device_channels))
     ])
-    for channel in channel_map.channels.items():
-        if channel.dev_binding.default == "master":
-            channel.set_master()
 
     for channel in channel_map.channels.values():
-        dev.out_port.send(channel.update_scribble())
-        dev.out_port.send(channel.update_level())
-        dev.out_port.send(channel.update_fader())
+        if channel.dev_binding.default == "master":
+            channel.set_master()
+        channel.update_scribble(dev)
+        channel.update_level(dev)
+        channel.update_fader(dev)
 
     return channel_map
 

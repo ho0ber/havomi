@@ -12,43 +12,50 @@ def start(event_queue, dev, channel_map):
         if event_type == "midi":
             match, value = channel_map.lookup(event)
             if match is not None:
-                # Volume change input
                 if match.control.func == "volume" and match.channel.target is not None:
                     if match.control.type == "fader":
-                        match.channel.level = value
-                        match.channel.update_target_volume()
+                        if match.channel.set_level(match.control.normalize_level(value)):
+                            match.channel.update_target_volume()
+                            match.channel.update_scribble(dev)
+                            match.channel.update_level(dev)
+                            match.channel.update_meter(dev)
                     elif match.control.type == "knob":
                         inc = match.control.get_increment(value)
                         match.channel.increment_level(inc)
-                    dev.out_port.send(match.channel.update_scribble())
-                    dev.out_port.send(match.channel.update_level())
-                    dev.out_port.send(match.channel.update_meter())
+                        match.channel.update_target_volume()
+                        match.channel.update_scribble(dev)
+                        match.channel.update_level(dev)
+                        match.channel.update_meter(dev)
 
                 # Assign session to a channel with a knob
                 elif match.control.func == "assign":
                     inc = match.control.get_increment(value)
                     match.channel.change_target(inc)
-                    dev.out_port.send(match.channel.update_scribble())
-                    dev.out_port.send(match.channel.update_level())
-                    dev.out_port.send(match.channel.update_meter())
-                    dev.out_port.send(match.channel.update_fader())
+                    match.channel.update_scribble(dev)
+                    match.channel.update_level(dev)
+                    match.channel.update_meter(dev)
+                    match.channel.update_fader(dev)
                 
                 # Quit by hitting select on master channel
-                elif match.control.func == "select" and match.channel.target.ttype == "master":
+                elif match.control.func == "select" and match.channel.target and match.channel.target.ttype == "master":
+                    print("Got quit button; quitting.")
                     break
                 
                 # Select session from foreground window
-                elif match.control.func == "select":
-                    session = get_active_window_session()
-                    match.channel.set_target_from_session(session)
-                    dev.out_port.send(match.channel.update_scribble())
-                    dev.out_port.send(match.channel.update_level())
-                    dev.out_port.send(match.channel.update_meter())
-                    dev.out_port.send(match.channel.update_fader())
+                elif match.control.func == "select" and match.control.down_value == value:
+                    if match.channel.target:
+                        match.channel.unset_target()
+                    else:
+                        session = get_active_window_session()
+                        match.channel.set_target_from_session(session)
+                    match.channel.update_scribble(dev)
+                    match.channel.update_level(dev)
+                    match.channel.update_meter(dev)
+                    match.channel.update_fader(dev)
 
         if event_type == "system":
             cid,level = event["channel"], event["level"]
             channel_map.channels[cid].level = level
-            dev.out_port.send(channel_map.channels[cid].update_scribble())
-            dev.out_port.send(channel_map.channels[cid].update_level())
-            dev.out_port.send(channel_map.channels[cid].update_fader())
+            channel_map.channels[cid].update_scribble(dev)
+            channel_map.channels[cid].update_level(dev)
+            channel_map.channels[cid].update_fader(dev)

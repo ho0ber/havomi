@@ -91,7 +91,7 @@ class Device(object):
             mtype = self.inflate(conf["mtype"])
             m_id_field,m_val_field = self.look_up_fields(mtype)
             return Meter(
-                type=conf["mtype"],
+                type=conf["type"],
                 func=conf["func"],
                 midi_type=mtype,
                 midi_id_field=m_id_field,

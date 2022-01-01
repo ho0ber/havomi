@@ -1,4 +1,4 @@
-from PyInquirer import prompt, Separator
+from prompt_toolkit.shortcuts import radiolist_dialog, input_dialog
 from pprint import pprint
 import mido
 import mido.backends.rtmidi
@@ -14,31 +14,27 @@ def get_device_file():
     """
     devices_path = join(dirname(dirname(realpath(__file__))),"devices")
     devices = [x for x in listdir(devices_path) if x.endswith(".yaml")]
-    questions = [
-        {
-            'type': 'list',
-            'name': 'device',
-            'message': 'Choose your device config',
-            'choices': devices + ["Custom"]
-        },
-    ]
-    answers = prompt(questions)
+    dev_name = radiolist_dialog(
+        title="Select Config",
+        text="Select a device config",
+        values=[(join(devices_path, d),d) for d in devices]+[("custom","Custom")]
+    ).run()
 
-    if answers["device"] == "Custom":
-        question = [
-            {
-                'type': 'input',
-                'name': 'device',
-                'message': 'Path to device config:',
-            }
-        ]
-        d_answer = prompt(question)
-        answers["device"] = d_answer["device"]
-    else:
-        answers["device"] = join(devices_path, answers["device"])
+    if dev_name == "custom":
+        dev_name = input_dialog(
+            title='Custom config',
+            text='Path to device config:').run()
 
-    return answers["device"]
+    print(dev_name)
+    return dev_name
 
+def match_dev(name, dev_list):
+    if name is None:
+        return None
+    for dev in dev_list:
+        if dev.startswith(name):
+            return dev
+    return None
 
 def get_config():
     """
@@ -55,33 +51,28 @@ def get_config():
         config = yaml.safe_load(device_file.read())
 
     if os.lower() == "windows":
-        input_dev = config.get("device_names",{}).get("windows",{}).get("input")
-        output_dev = config.get("device_names",{}).get("windows",{}).get("output")
+        conf_input = config.get("device_names",{}).get("windows",{}).get("input")
+        conf_output = config.get("device_names",{}).get("windows",{}).get("output")
+    
+    input_dev = match_dev(conf_input, inputs)
+    output_dev = match_dev(conf_output, outputs)
 
-    questions = []
-    if input_dev is None or input_dev not in inputs:
-        input_dev = None
-        questions.append({
-            'type': 'list',
-            'name': 'input',
-            'message': 'Choose your input device',
-            'choices': inputs
-        })
+    if input_dev is None:
+        input_dev = radiolist_dialog(
+            title="Select Device",
+            text="Choose your input device",
+            values=[(i,i) for i in inputs]
+        ).run()
 
-    if output_dev is None or output_dev not in outputs:
-        output_dev = None
-        questions.append({
-            'type': 'list',
-            'name': 'output',
-            'message': 'Choose your output device',
-            'choices': outputs
-        })
+    if output_dev is None:
+        output_dev = radiolist_dialog(
+            title="Select Device",
+            text="Choose your output device",
+            values=[(o,o) for o in outputs]
+        ).run()
 
-    answers = prompt(questions) if questions else {}
-    if input_dev:
-        answers["input"] = input_dev
-    if output_dev:
-        answers["output"] = output_dev
-    answers["device"] = device_filename
-
-    return answers
+    return {
+        "input": input_dev,
+        "output": output_dev,
+        "device": device_filename,
+    }
