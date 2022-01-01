@@ -15,8 +15,8 @@ jobs:
       - name: Compile
         run: |
           npm install mermaid.cli
-          mmdc -i structure.mmd -o diagram.svg
-          mmdc -i structure.mmd -o diagram.png
+          ./node_modules/.bin/mmdc -i structure.mmd -o diagram.svg
+          ./node_modules/.bin/mmdc -i structure.mmd -o diagram.png
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
