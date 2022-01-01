@@ -1,3 +1,4 @@
+from havomi.windows_helpers import get_active_window_session
 
 def start(event_queue, dev, channel_map):
     """
@@ -11,19 +12,39 @@ def start(event_queue, dev, channel_map):
         if event_type == "midi":
             match, value = channel_map.lookup(event)
             if match is not None:
-                if match.func == "volume" and match.channel.target is not None:
-                    match.channel.level = value
-                    match.channel.update_target_volume()
+                # Volume change input
+                if match.control.func == "volume" and match.channel.target is not None:
+                    if match.control.type == "fader":
+                        match.channel.level = value
+                        match.channel.update_target_volume()
+                    elif match.control.type == "knob":
+                        inc = match.control.get_increment(value)
+                        match.channel.increment_level(inc)
                     dev.out_port.send(match.channel.update_scribble())
                     dev.out_port.send(match.channel.update_level())
-                elif match.func == "assign":
-                    inc = {1:-1, 65:+1, None:0}.get(value)
+                    dev.out_port.send(match.channel.update_meter())
+
+                # Assign session to a channel with a knob
+                elif match.control.func == "assign":
+                    inc = match.control.get_increment(value)
                     match.channel.change_target(inc)
                     dev.out_port.send(match.channel.update_scribble())
                     dev.out_port.send(match.channel.update_level())
+                    dev.out_port.send(match.channel.update_meter())
                     dev.out_port.send(match.channel.update_fader())
-                elif match.func == "select" and match.channel.target.ttype == "master":
+                
+                # Quit by hitting select on master channel
+                elif match.control.func == "select" and match.channel.target.ttype == "master":
                     break
+                
+                # Select session from foreground window
+                elif match.control.func == "select":
+                    session = get_active_window_session()
+                    match.channel.set_target_from_session(session)
+                    dev.out_port.send(match.channel.update_scribble())
+                    dev.out_port.send(match.channel.update_level())
+                    dev.out_port.send(match.channel.update_meter())
+                    dev.out_port.send(match.channel.update_fader())
 
         if event_type == "system":
             cid,level = event["channel"], event["level"]

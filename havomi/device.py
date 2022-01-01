@@ -39,7 +39,7 @@ class Device(object):
         channels = []
         for g in self.config["groups"]:
             for chan_config in g["channels"]:
-                channel = DeviceChannel(cid=chan_config["cid"], controls=[])
+                channel = DeviceChannel(cid=chan_config["cid"], default=chan_config.get("default"), controls=[])
                 for con_conf in chan_config["controls"]:
                     channel.controls.append(self.build_control(con_conf))
                 channels.append(channel)
@@ -72,7 +72,8 @@ class Device(object):
                 midi_value_field=m_val_field,
                 feedback=conf["fb"],
                 increment_value=conf["inc"],
-                decrement_value=conf["dec"]
+                decrement_value=conf["dec"],
+                accel=conf.get("accel", False),
             )
         elif conf["type"] == "button":
             mtype = self.inflate(conf["mtype"])
@@ -97,6 +98,8 @@ class Device(object):
                 midi_id=conf["mid"],
                 midi_value_field=m_val_field,
                 feedback=conf["fb"],
+                min=conf.get("min", 0),
+                max=conf.get("max", 127),
             )
 
     def inflate(self, event_type):

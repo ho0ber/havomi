@@ -52,11 +52,25 @@ class Channel:
 
     def update_level(self):
         """
-        Returns a midi message to update volume meter
+        Returns a midi message to update volume level display
         """
         d = self.dev_binding
         c = d.find_control("level")
-        if c.feedback:
+        display_level = int((self.level/127.0)*(d.max-d.min)+d.min)
+        if c and c.feedback:
+            kwargs = {
+                c.midi_id_field: c.midi_id,
+                c.midi_value_field: display_level
+            }
+            return mido.Message(c.midi_type,**kwargs)
+
+    def update_meter(self):
+        """
+        Returns a midi message to update volume meter
+        """
+        d = self.dev_binding
+        c = d.find_control("meter")
+        if c and c.feedback:
             kwargs = {
                 c.midi_id_field: c.midi_id,
                 c.midi_value_field: self.level
@@ -86,6 +100,14 @@ class Channel:
         elif self.target.ttype == "master":
             self.target.session.SetMasterVolumeLevelScalar(self.level/127, None)
 
+    def increment_level(self, inc):
+        new_level = self.level + inc
+        if new_level < 0:
+            new_level = 0
+        elif new_level > 127:
+            new_level = 127
+        self.level = new_level
+
     def set_target_from_session(self, session):
         self.name = session.Process.name() if session.Process else "?"
         self.target = Target(self.name, "application", session)
@@ -110,7 +132,6 @@ class Channel:
                 return i
         
         return None
-
 
     def change_target(self, inc):
         sessions = AudioUtilities.GetAllSessions()
@@ -137,4 +158,3 @@ class Channel:
         self.target = Target(self.name, "master", volume)
         self.color = "white"
         self.level = int(volume.GetMasterVolumeLevelScalar()*127)
-    

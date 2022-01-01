@@ -13,56 +13,57 @@ groups:
     - cid: 0
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 70, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 80, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 80, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 32, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 24, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 90, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 90, fb: true}
     - cid: 1
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 71, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 81, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 81, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 33, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 25, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 91, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 91, fb: true}
     - cid: 2
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 72, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 82, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 82, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 34, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 26, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 92, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 92, fb: true}
     - cid: 3
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 73, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 83, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 83, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 35, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 27, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 93, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 93, fb: true}
     - cid: 4
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 74, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 84, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 84, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 36, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 28, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 94, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 94, fb: true}
     - cid: 5
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 75, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 85, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 85, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 37, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 29, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 95, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 95, fb: true}
     - cid: 6
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 76, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 86, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 86, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 38, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 30, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 96, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 96, fb: true}
     - cid: 7
+      default: master
       controls:
       - {func: volume, type: fader,  mtype: cc,   mid: 77, fb: true, min: 0, max: 127}
-      - {func: assign,   type: knob,   mtype: cc,   mid: 87, fb: true, dec: 1, inc: 65}
+      - {func: assign, type: knob,   mtype: cc,   mid: 87, fb: true, dec: 1, inc: 65}
       - {func: select, type: button, mtype: note, mid: 39, fb: true}
       - {func: mute,   type: button, mtype: note, mid: 31, fb: true}
-      - {func: level,  type: meter,  mtype: cc,   mid: 97, fb: true}
+      - {func: meter,  type: meter,  mtype: cc,   mid: 97, fb: true}

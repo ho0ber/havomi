@@ -7,6 +7,7 @@ class DeviceChannel:
     controlling a single target (application or audio device).
     """
     cid: int
+    default: str
     controls: field(default_factory=list)
 
     def find_control(self, func):

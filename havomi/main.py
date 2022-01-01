@@ -18,7 +18,7 @@ if not DEVICES.is_dir():
 def init_channels(dev):
     """
     Initialize the Channels with basic mappings to the DeviceChannels. This will also configure
-    the last DeviceChannel to have the master system volume as a target by default.
+    any DeviceChannels where default==master.
     """
     channel_map = ChannelMap([
         Channel(
@@ -31,7 +31,9 @@ def init_channels(dev):
         )
         for i in range(len(dev.device_channels))
     ])
-    channel_map.last().set_master()
+    for channel in channel_map.channels.items():
+        if channel.dev_binding.default == "master":
+            channel.set_master()
 
     for channel in channel_map.channels.values():
         dev.out_port.send(channel.update_scribble())

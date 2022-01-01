@@ -22,6 +22,21 @@ class Fader(Control):
 class RotaryEncoder(Control):
     increment_value: int
     decrement_value: int
+    accel: bool = False
+
+    def get_increment(self, value):
+        if self.accel:
+            if self.increment_value < value < self.decrement_value:
+                return value-self.increment_value+1
+            if value > self.decrement_value:
+                return 0-(value-self.decrement_value+1)
+
+        if value == self.increment_value:
+            return 1
+        if value == self.decrement_value:
+            return -1
+
+        return 0
 
 @dataclass
 class Button(Control):
@@ -30,4 +45,6 @@ class Button(Control):
 
 @dataclass
 class Meter(Control):
+    min: int = 0
+    max: int = 127
     pass

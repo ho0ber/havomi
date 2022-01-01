@@ -1,0 +1,62 @@
+display_name: Behringer X-Touch Mini
+device_names:
+  windows:
+    input: X-Touch-Mini
+    output: X-Touch-Mini
+
+groups:
+  - name: main
+    channels:
+    - cid: 0
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 16, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 32, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 89, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 9,  fb: true, min: 0, max: 13}
+    - cid: 1
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 17, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 33, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 90, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 10, fb: true, min: 0, max: 13}
+    - cid: 2
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 18, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 34, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 40, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 11, fb: true, min: 0, max: 13}
+    - cid: 3
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 19, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 35, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 41, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 12, fb: true, min: 0, max: 13}
+    - cid: 4
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 20, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 36, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 42, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 13, fb: true, min: 0, max: 13}
+    - cid: 5
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 21, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 37, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 43, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 14, fb: true, min: 0, max: 13}
+    - cid: 6
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 22, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 38, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 44, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 15, fb: true, min: 0, max: 13}
+    - cid: 7
+      controls:
+      - {func: volume, type: knob,   mtype: cc,   mid: 23, fb: false, dec: 65, inc: 1, accel: true}
+      - {func: select, type: button, mtype: note, mid: 39, fb: true}
+      - {func: mute,   type: button, mtype: note, mid: 45, fb: true}
+      - {func: level,  type: meter,  mtype: cc,   mid: 16, fb: true, min: 0, max: 13}
+    - cid: 8
+      default: master
+      controls:
+      - {func: volume, type: fader,  mtype: pw,   mid: 8,  fb: false, min: -8192, max: 8064}
+
