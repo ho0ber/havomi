@@ -1,0 +1,24 @@
+name: Compile Diagram
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install mermaid.cli
+      - name: Compile
+        run: |
+          mmdc -i structure.mmd -o diagram.svg
+          mmdc -i structure.mmd -o diagram.png
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+            name: diagram
+            path: diagram.png
