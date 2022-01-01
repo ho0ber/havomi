@@ -1,5 +1,5 @@
 import win32gui, win32process
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from pycaw.pycaw import AudioUtilities
 import psutil
 
 def get_active_window_session():

@@ -30,3 +30,17 @@ To download a development build, **log in** to a github account and then go to t
 * [**MIDI Mixer**](https://www.midi-mixer.com/) - Not open source, but free. Actively maintained.
 * [**MidiManager**](https://jitse-ten-hove.itch.io/midimanager) - Not open source, but free. Actively maintained.
 * [**deej**](https://github.com/omriharel/deej) - Open source. A similar project for those interested in building their own mixer.
+
+## Development & Environment Setup
+### Running locally on Windows
+* `python3 -m venv venv`
+* `.\venv\Scripts\activate.bat`
+* `pip install -r requirements.txt`
+* `python main.py`
+
+### Building locally on Windows
+* `python3 -m venv venv`
+* `.\venv\Scripts\activate.bat`
+* `pip install -r requirements.txt`
+* `pip install nuitka zstandard`
+* `.\scripts\build.bat`

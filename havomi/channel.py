@@ -1,7 +1,7 @@
-from dataclasses import dataclass
 import hashlib
 import mido
 import mido.backends.rtmidi
+from dataclasses import dataclass
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume

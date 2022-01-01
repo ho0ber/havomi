@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from pycaw.pycaw import AudioUtilities
 
 @dataclass
 class Target:

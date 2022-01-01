@@ -1,11 +1,10 @@
-from prompt_toolkit.shortcuts import radiolist_dialog, input_dialog
-from pprint import pprint
-import mido
-import mido.backends.rtmidi
-from os.path import join, dirname, realpath
-from os import listdir
 import platform
 import yaml
+import mido
+import mido.backends.rtmidi
+from os import listdir
+from os.path import join, dirname, realpath
+from prompt_toolkit.shortcuts import radiolist_dialog, input_dialog
 
 def get_device_file():
     """
