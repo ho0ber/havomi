@@ -2,5 +2,5 @@ mido==1.2.10
 python-rtmidi==1.4.9
 PyYAML==6.0
 pycaw==20181226
-PyInquirer==1.0.3
+prompt-toolkit==3.0.24
 # uses nuitka and zstandard at build time
