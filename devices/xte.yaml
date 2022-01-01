@@ -1,8 +1,8 @@
 display_name: Behringer X-Touch Extender
 device_names:
   windows:
-    input: X-Touch-Ext 0x
-    output: X-Touch-Ext 1x
+    input: X-Touch-Ext 0
+    output: X-Touch-Ext 1
   osx:
     input: X-Touch-Ext X-TOUCH_INT
     output: X-Touch-Ext X-TOUCH_INT
