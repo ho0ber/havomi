@@ -1,23 +1,6 @@
-altgraph==0.17.2
-comtypes==1.1.10      
-enum34==1.1.10        
-future==0.18.2        
-mido==1.2.10
-Nuitka==0.6.18.6      
-pefile==2021.9.3      
-prompt-toolkit==3.0.24
-psutil==5.9.0
 pycaw==20181226       
-Pygments==2.11.1      
-PyInquirer==1.0.3     
-pyinstaller==4.7      
-pyinstaller-hooks-contrib==2021.4
 python-rtmidi==1.4.9
-pywin32==303
-pywin32-ctypes==0.2.0
+mido==1.2.10
 PyYAML==6.0
-regex==2021.11.10
-six==1.16.0
-wcwidth==0.2.5
-zstandard==0.16.0
+pywin32==300
 # uses nuitka and zstandard at build time

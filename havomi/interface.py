@@ -4,7 +4,23 @@ import mido
 import mido.backends.rtmidi
 from os import listdir
 from os.path import join, dirname, realpath
-from prompt_toolkit.shortcuts import radiolist_dialog, input_dialog
+
+
+def chooser(prompt, choices):
+    print(prompt)
+    for i,choice in enumerate(choices):
+        print(f"{i}) {choice}")
+    
+    while True:
+        try:
+            selection = int(input(":"))
+        except ValueError or TypeError as e:
+            pass
+        else:
+            if 0 <= selection < len(choices):
+                return choices[selection]
+        print("Bad input, try again.")
+
 
 def get_device_file():
     """
@@ -13,19 +29,8 @@ def get_device_file():
     """
     devices_path = join(dirname(dirname(realpath(__file__))),"devices")
     devices = [x for x in listdir(devices_path) if x.endswith(".yaml")]
-    dev_name = radiolist_dialog(
-        title="Select Config",
-        text="Select a device config",
-        values=[(join(devices_path, d),d) for d in devices]+[("custom","Custom")]
-    ).run()
-
-    if dev_name == "custom":
-        dev_name = input_dialog(
-            title='Custom config',
-            text='Path to device config:').run()
-
-    print(dev_name)
-    return dev_name
+    dev_name = chooser("Select a device config", devices)
+    return join(devices_path, dev_name)
 
 def match_dev(name, dev_list):
     if name is None:
@@ -57,18 +62,10 @@ def get_config():
     output_dev = match_dev(conf_output, outputs)
 
     if input_dev is None:
-        input_dev = radiolist_dialog(
-            title="Select Device",
-            text="Choose your input device",
-            values=[(i,i) for i in inputs]
-        ).run()
+        input_dev = chooser("Choose your input device", inputs)
 
     if output_dev is None:
-        output_dev = radiolist_dialog(
-            title="Select Device",
-            text="Choose your output device",
-            values=[(o,o) for o in outputs]
-        ).run()
+        output_dev = chooser("Choose your input device", outputs)
 
     return {
         "input": input_dev,
