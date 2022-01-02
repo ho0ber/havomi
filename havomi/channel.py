@@ -6,9 +6,10 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-from havomi.device import DeviceChannel
-from havomi.target import Target
+from havomi.device import Device, DeviceChannel
+from havomi.target import ApplicationVolume, DeviceVolume, SystemSoundsVolume, Target
 from havomi.scribble import scribble
+import havomi.windows_helpers as wh
 
 @dataclass
 class Channel:
@@ -99,12 +100,18 @@ class Channel:
         self.level = int(prelim_level) if prelim_level >= 0 else 0
 
     def get_level_from_target(self):
-        self.set_level_from_float(self.target.session.SimpleAudioVolume.GetMasterVolume())
+        if type(self.target) == ApplicationVolume:
+            self.set_level_from_float(self.target.sessions[0].SimpleAudioVolume.GetMasterVolume())
+        elif type(self.target) == DeviceVolume:
+            self.set_level_from_float(self.target.session.GetMasterVolumeLevelScalar())
 
     def update_target_volume(self):
-        if self.target.ttype == "application":
+        if type(self.target) == ApplicationVolume:
+            for session in self.target.sessions:
+                session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
+        elif type(self.target) == SystemSoundsVolume:
             self.target.session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
-        elif self.target.ttype == "master":
+        elif type(self.target) == DeviceVolume:
             self.target.session.SetMasterVolumeLevelScalar(self.level/127, None)
 
     def increment_level(self, inc):
@@ -115,58 +122,49 @@ class Channel:
             new_level = 127
         self.level = new_level
 
-    def set_target_from_session(self, session):
-        if session is None:
-            print(f"No session, unsetting {self.cid}")
+    def set_target_from_app_def(self, app_def):
+        if app_def is None:
+            print(f"No app_def, unsetting {self.cid}")
             self.unset_target()
-        else:
-            print(f"Found session, setting {self.cid} to {session}")
-            self.name = session.Process.name() if session.Process else "?"
-            self.target = Target(self.name, "application", session)
-            self.color = ["red","green","yellow","blue","cyan","magenta"][int(hashlib.md5(session.InstanceIdentifier.encode('utf-8')).hexdigest(),16)%6%6] if session.Process else "white"
-            self.get_level_from_target()
+            return
+        
+        if not app_def.sessions:
+            print(f"No sessions, unsetting {self.cid}")
+            self.unset_target()
+            return
+        
+        self.name = app_def.name
+        self.target = ApplicationVolume(app_def.name, app_def.sessions)
+        self.color = app_def.color
+        self.get_level_from_target()
+        print((self.name, self.target, self.color, self.level))
 
     def unset_target(self):
         self.target = None
         self.name = "Unused"
         self.color = "black"
         self.level = 0
-    
-    def find_session(self, session_list):
-        if self.target is None:
-            return None
-        
-        for i,s in enumerate(session_list):
-            if self.target.session.InstanceIdentifier is None:
-                if s.InstanceIdentifier is None:
-                    return i
-            elif s.InstanceIdentifier == self.target.session.InstanceIdentifier:
-                return i
-        
-        return None
 
     def change_target(self, inc):
-        sessions = AudioUtilities.GetAllSessions()
-        index = self.find_session(sessions)
+        apps = wh.get_applications_and_sessions()
+        app_names = sorted(apps.keys())
+        index = app_names.index(self.target.name) if self.target is not None else None
 
         if index is None:
             if inc > 0:
-                self.set_target_from_session(sessions[0])
+                self.set_target_from_app_def(apps[app_names[0]])
             else:
-                self.set_target_from_session(sessions[-1])
+                self.set_target_from_app_def(apps[app_names[-1]])
             
         else:
             pos = index + inc
-            if pos >= len(sessions) or pos < 0:
+            if pos >= len(app_names) or pos < 0:
                 self.unset_target()
             else:
-                self.set_target_from_session(sessions[pos])
+                self.set_target_from_app_def(apps[app_names[pos]])
 
     def set_master(self):
-        devices = AudioUtilities.GetSpeakers()
-        interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-        volume = cast(interface, POINTER(IAudioEndpointVolume))
         self.name = "Master"
-        self.target = Target(self.name, "master", volume)
         self.color = "white"
-        self.level = int(volume.GetMasterVolumeLevelScalar()*127)
+        self.target = DeviceVolume(self.name, wh.get_master_volume_session())
+        self.level = int(self.target.session.GetMasterVolumeLevelScalar()*127)

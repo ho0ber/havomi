@@ -1,3 +1,1 @@
-# Nuitka==0.6.18.6
-# zstandard==0.16.0
 pyinstaller==4.7

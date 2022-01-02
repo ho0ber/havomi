@@ -1,4 +1,4 @@
-from havomi.windows_helpers import get_active_window_session
+import havomi.windows_helpers as wh
 
 def start(event_queue, dev, channel_map):
     """
@@ -37,7 +37,7 @@ def start(event_queue, dev, channel_map):
                     match.channel.update_fader(dev)
                 
                 # Quit by hitting select on master channel
-                elif match.control.func == "select" and match.channel.target and match.channel.target.ttype == "master":
+                elif match.control.func == "select" and match.channel.target and match.channel.target.name == "Master":
                     print("Got quit button; quitting.")
                     break
                 
@@ -46,8 +46,8 @@ def start(event_queue, dev, channel_map):
                     if match.channel.target:
                         match.channel.unset_target()
                     else:
-                        session = get_active_window_session()
-                        match.channel.set_target_from_session(session)
+                        app_def = wh.get_active_window_app_def()
+                        match.channel.set_target_from_app_def(app_def)
                     match.channel.update_scribble(dev)
                     match.channel.update_level(dev)
                     match.channel.update_meter(dev)

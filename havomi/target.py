@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class Target:
@@ -8,6 +8,17 @@ class Target:
     ttype: 'application' or 'master'
     session: an audio session with methods to get and set volume
     """
+    # ttype: str
     name: str
-    ttype: str
+
+@dataclass
+class ApplicationVolume(Target):
+    sessions: list[any] = field(default_factory=list)
+
+@dataclass
+class SystemSoundsVolume(Target):
+    session: any
+
+@dataclass
+class DeviceVolume(Target):
     session: any
