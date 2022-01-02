@@ -7,6 +7,8 @@ device_names:
     input: X-Touch-Ext X-TOUCH_INT
     output: X-Touch-Ext X-TOUCH_INT
 
+scribble: True
+
 groups:
   - name: main
     channels:

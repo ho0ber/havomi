@@ -18,6 +18,7 @@ class Device(object):
             self.config = yaml.safe_load(device_file.read())
         self.name = self.config["display_name"]
         self.device_channels = self.build_channels()
+        self.scribble = self.config.get("scribble", False)
         self.out_port = self.open_out_port()
 
     def open_out_port(self):

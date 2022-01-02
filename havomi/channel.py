@@ -36,7 +36,8 @@ class Channel:
         """
         Returns a sysex message to update a scribble strip be sent via midi
         """
-        dev.out_port.send(scribble(self.cid, color=self.color, top=self.name, bottom=self.level, inv_bot=True))
+        if dev.scribble:
+            dev.out_port.send(scribble(self.cid, color=self.color, top=self.name, bottom=self.level, inv_bot=True))
 
     def update_fader(self, dev):
         """
@@ -124,12 +125,10 @@ class Channel:
 
     def set_target_from_app_def(self, app_def):
         if app_def is None:
-            print(f"No app_def, unsetting {self.cid}")
             self.unset_target()
             return
         
         if not app_def.sessions:
-            print(f"No sessions, unsetting {self.cid}")
             self.unset_target()
             return
         
@@ -137,13 +136,14 @@ class Channel:
         self.target = ApplicationVolume(app_def.name, app_def.sessions)
         self.color = app_def.color
         self.get_level_from_target()
-        print((self.name, self.target, self.color, self.level))
+        print(f"Setting channel {self.cid} to {self.name} with {len(self.target.sessions)} sessions ")
 
     def unset_target(self):
         self.target = None
         self.name = "Unused"
         self.color = "black"
         self.level = 0
+        print(f"Unsetting channel {self.cid}")
 
     def change_target(self, inc):
         apps = wh.get_applications_and_sessions()
