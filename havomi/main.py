@@ -35,9 +35,7 @@ def init_channels(dev):
     for channel in channel_map.channels.values():
         if channel.dev_binding.default == "master":
             channel.set_master()
-        channel.update_scribble(dev)
-        channel.update_level(dev)
-        channel.update_fader(dev)
+        channel.update_display(dev)
 
     return channel_map
 

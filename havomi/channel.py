@@ -32,6 +32,32 @@ class Channel:
     dev_binding: DeviceChannel
     target: Target
 
+    def update_display(self, dev):
+        self.update_scribble(dev)
+        self.update_level(dev)
+        self.update_meter(dev)
+        self.update_fader(dev)
+        self.update_buttons(dev)
+    
+    def update_buttons(self, dev):
+        c = self.dev_binding.find_control("select")
+        if c.feedback:
+            if self.target:
+                if type(self.target) == ApplicationVolume:
+                    value = c.down_value if (len(self.target.sessions) > 0) else c.up_value
+                    kwargs = {
+                        c.midi_id_field: c.midi_id,
+                        c.midi_value_field: value
+                    }
+                    dev.out_port.send(mido.Message(c.midi_type,**kwargs))
+            else:
+                value = c.up_value
+                kwargs = {
+                    c.midi_id_field: c.midi_id,
+                    c.midi_value_field: value
+                }
+                dev.out_port.send(mido.Message(c.midi_type,**kwargs))
+
     def update_scribble(self, dev):
         """
         Returns a sysex message to update a scribble strip be sent via midi

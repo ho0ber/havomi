@@ -16,25 +16,18 @@ def start(event_queue, dev, channel_map):
                     if match.control.type == "fader":
                         if match.channel.set_level(match.control.normalize_level(value)):
                             match.channel.update_target_volume()
-                            match.channel.update_scribble(dev)
-                            match.channel.update_level(dev)
-                            match.channel.update_meter(dev)
+                            match.channel.update_display(dev)
                     elif match.control.type == "knob":
                         inc = match.control.get_increment(value)
                         match.channel.increment_level(inc)
                         match.channel.update_target_volume()
-                        match.channel.update_scribble(dev)
-                        match.channel.update_level(dev)
-                        match.channel.update_meter(dev)
+                        match.channel.update_display(dev)
 
                 # Assign session to a channel with a knob
                 elif match.control.func == "assign":
                     inc = match.control.get_increment(value)
                     match.channel.change_target(inc)
-                    match.channel.update_scribble(dev)
-                    match.channel.update_level(dev)
-                    match.channel.update_meter(dev)
-                    match.channel.update_fader(dev)
+                    match.channel.update_display(dev)
                 
                 # Quit by hitting select on master channel
                 elif match.control.func == "select" and match.channel.target and match.channel.target.name == "Master":
@@ -48,10 +41,7 @@ def start(event_queue, dev, channel_map):
                     else:
                         app_def = wh.get_active_window_app_def()
                         match.channel.set_target_from_app_def(app_def)
-                    match.channel.update_scribble(dev)
-                    match.channel.update_level(dev)
-                    match.channel.update_meter(dev)
-                    match.channel.update_fader(dev)
+                    match.channel.update_display(dev)
 
         if event_type == "system":
             cid,level = event["channel"], event["level"]
