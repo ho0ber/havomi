@@ -33,14 +33,14 @@ To download a development build, **log in** to a github account and then go to t
 
 ## Development & Environment Setup
 ### Running locally on Windows
-* `python3 -m venv venv`
+* `python3.9 -m venv venv`
 * `.\venv\Scripts\activate.bat`
 * `pip install -r requirements.txt`
 * `python main.py`
 
 ### Building locally on Windows
-* `python3 -m venv venv`
+* `python3.9 -m venv venv`
 * `.\venv\Scripts\activate.bat`
 * `pip install -r requirements.txt`
-* `pip install nuitka zstandard`
+* `pip install -r build_requirements.txt`
 * `.\scripts\build.bat`
