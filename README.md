@@ -23,6 +23,9 @@ An additional improvement planned for Havomi is significantly simplified device 
 
 The biggest advantage, by far, is that I will be able to personally contribute significantly more without significant effort. I'll be able to identify and fix many bugs without needing to change operating systems, and automated builds will enable quick release of bug fixes, even if I'm away from a Windows box.
 
+## Getting Involved
+To help test or contribute, I encourage you to join our discord: https://discord.gg/BtVTYxp
+
 ## Download
 To download a development build, **log in** to a github account and then go to the [Build executable actions page](https://github.com/ho0ber/havomi/actions/workflows/build.yml). Click the most recent completed workflow run and scroll to the bottom to find the Windows-Binary artifact, and download.
 
