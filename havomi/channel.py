@@ -175,8 +175,6 @@ class Channel:
             self.unset_target()
             return
 
-
-
         self.name = app_def.name
         self.target = ApplicationVolume(app_def.name, app_def.sessions) 
 
