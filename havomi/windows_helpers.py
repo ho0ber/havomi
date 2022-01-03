@@ -37,7 +37,7 @@ def find_audio_sessions(target, session_list):
     return None
 
 def construct_color_from_hash(name):
-    colors = ["red","green","yellow","blue","cyan","magenta"]
+    colors = ["red","yellow","cyan","green","blue","magenta"]
     name_to_int = int(hashlib.md5(name.encode('utf-8')).hexdigest(),16)
     return colors[name_to_int%len(colors)]
 
@@ -55,19 +55,23 @@ def get_active_window_app_def():
     return AppDef(process_name, color, app_sessions)
 
 def get_applications_and_sessions():
-    sessions = AudioUtilities.GetAllSessions()
-    app_sessions = DefaultDict(list)
+    try:
+        sessions = AudioUtilities.GetAllSessions()
+        app_sessions = DefaultDict(list)
 
-    apps = {}
-    for session in sessions:
-        name = session.Process.name() if session.Process else "Sys"
-        app_sessions[name].append(session)
-    
-    for name,sessions in app_sessions.items():
-        color = construct_color_from_hash(name) if name != "Sys" else "white"
-        apps[name] = AppDef(name, color, sessions)
-    
-    apps["Master"] = AppDef("Master", "white", [get_master_volume_session()])
+        apps = {}
+        for session in sessions:
+            name = session.Process.name() if session.Process else "Sys"
+            app_sessions[name].append(session)
+        
+        for name,sessions in app_sessions.items():
+            color = construct_color_from_hash(name) if name != "Sys" else "white"
+            apps[name] = AppDef(name, color, sessions)
+        
+        apps["Master"] = AppDef("Master", "white", [get_master_volume_session()])
+    except OSError as e:
+        print(f"Got error: {e}")
+        apps = {}
 
     return apps
 

@@ -7,32 +7,33 @@ def start(event_queue, dev, shared_map, channel_map):
     for device config and application config (target bindings) to be the means by which we change
     behaviors of various controls.
     """
+    active_modes = set()
+
     while True:
         event_type,event = event_queue.get()
         if event_type == "midi":
             match, value = channel_map.lookup(event)
             if match is not None:
-                if match.control.func == "volume" and match.channel.target is not None:
+                if match.control.func == "volume" and (match.channel.target is not None or "assign_mod" in active_modes):
                     if match.control.type == "fader":
                         if match.channel.set_level(match.control.normalize_level(value)):
                             match.channel.update_target_volume()
                             match.channel.update_display(dev)
                     elif match.control.type == "knob":
                         inc = match.control.get_increment(value)
-                        match.channel.increment_level(inc)
-                        match.channel.update_target_volume()
-                        match.channel.update_display(dev)
+                        if "assign_mod" in active_modes:
+                            match.channel.change_target(inc)
+                            match.channel.update_display(dev, fader=True)
+                        else:
+                            match.channel.increment_level(inc)
+                            match.channel.update_target_volume()
+                            match.channel.update_display(dev)
 
                 # Assign session to a channel with a knob
                 elif match.control.func == "assign":
                     inc = match.control.get_increment(value)
                     match.channel.change_target(inc)
                     match.channel.update_display(dev, fader=True)
-                
-                # Quit by hitting select on master channel
-                elif match.control.func == "select" and match.channel.target and match.channel.target.name == "Master":
-                    print("Got quit button; quitting.")
-                    break
                 
                 # Select session from foreground window
                 elif match.control.func == "select" and match.control.down_value == value:
@@ -71,6 +72,12 @@ def start(event_queue, dev, shared_map, channel_map):
 
                     if match.func == "media_next" and value == match.down_value:
                         wh.send_key("VK_MEDIA_NEXT_TRACK")
+
+                    if match.func.endswith("_mod"):
+                        if value == match.down_value:
+                            active_modes.add(match.func)
+                        else:
+                            active_modes.remove(match.func)
 
 
         if event_type == "system":

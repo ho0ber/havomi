@@ -62,8 +62,10 @@ class DeviceVolume(Target):
         return self.session.GetMute()
 
     def set_volume(self, level):
-        self.session.SetMasterVolumeLevelScalar(level, None)
-
+        try:
+            self.session.SetMasterVolumeLevelScalar(level, None)
+        except ValueError as e:
+            print(f"Failed to set device volume: {e}")
     
     def set_mute(self, mute):
         self.session.SetMute(mute, None)

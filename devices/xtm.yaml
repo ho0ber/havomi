@@ -5,7 +5,7 @@ device_names:
     output: X-TOUCH MINI
 
 shared:
-  - {func: select_mod,       type: button, mtype: note, mid: 87, fb: false}
+  - {func: assign_mod,       type: button, mtype: note, mid: 87, fb: false}
   - {func: media_prev,       type: button, mtype: note, mid: 91, fb: false}
   - {func: media_next,       type: button, mtype: note, mid: 92, fb: false}
   - {func: media_stop,       type: button, mtype: note, mid: 93, fb: false}

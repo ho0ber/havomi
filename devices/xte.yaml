@@ -9,6 +9,10 @@ device_names:
 
 scribble: True
 
+shared:
+  - {func: quit,             type: button, mtype: note, mid: 15, fb: false}
+  - {func: media_play_pause, type: button, mtype: note, mid: 23, fb: false}
+
 channels:
   - cid: 0
     controls:
