@@ -83,7 +83,6 @@ def send_key(key):
         "VK_MEDIA_STOP": 0xB2,
         "VK_MEDIA_PLAY_PAUSE": 0xB3,
     }
-    # hwcode = win32api.MapVirtualKey(VK_MEDIA_PLAY_PAUSE, 0)
     if key in keys:
         hwcode = win32api.MapVirtualKey(keys[key], 0)
         win32api.keybd_event(keys[key],hwcode)

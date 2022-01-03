@@ -18,10 +18,16 @@ class ApplicationVolume(Target):
     sessions: list[any] = field(default_factory=list)
 
     def get_volume(self):
-        return min(session.SimpleAudioVolume.GetMasterVolume() for session in self.sessions)
+        if self.sessions:
+            return min(session.SimpleAudioVolume.GetMasterVolume() for session in self.sessions)
+        else:
+            return 0
     
     def get_mute(self):
-        return bool(min(session.SimpleAudioVolume.GetMute() for session in self.sessions))
+        if self.sessions:
+            return bool(min(session.SimpleAudioVolume.GetMute() for session in self.sessions))
+        else:
+            return False
 
     def set_volume(self, level):
         for session in self.sessions:
@@ -38,11 +44,11 @@ class ApplicationVolume(Target):
 class SystemSoundsVolume(Target):
     session: any
 
-    def get_volume(self):
-        return self.session.SimpleAudioVolume.GetMasterVolume()
+    def get_volume(self): 
+        return self.session.SimpleAudioVolume.GetMasterVolume() if self.session else 0
     
     def get_mute(self):
-        return self. session.SimpleAudioVolume.GetMute()
+        return self.session.SimpleAudioVolume.GetMute() if self.session else False
 
     def set_volume(self, level):
         self.session.SimpleAudioVolume.SetMasterVolume(level, None)
@@ -55,10 +61,10 @@ class DeviceVolume(Target):
     session: any
 
     def get_volume(self):
-        return self.session.GetMasterVolumeLevelScalar()
+        return self.session.GetMasterVolumeLevelScalar() if self.session else 0
 
     def get_mute(self):
-        return self.session.GetMute()
+        return self.session.GetMute() if self.session else 0
 
     def set_volume(self, level):
         try:

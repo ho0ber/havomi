@@ -1,4 +1,8 @@
 from collections import namedtuple
+import yaml
+import os
+import havomi.windows_helpers as wh
+
 
 MapEntry = namedtuple("MapEntry",["control", "channel"])
 
@@ -37,6 +41,31 @@ class ChannelMap(object):
     
     def last(self):
         return self.channels[max(self.channels.keys())]
+
+    def file_path(self, filename):
+        app_dir = os.path.join(os.getenv('LOCALAPPDATA'),"havomi")
+        return os.path.join(app_dir, filename)
+
+    def save(self):
+        data = {
+            "channels": {
+                cid: [channel.target.name, channel.color] for cid,channel in self.channels
+            }
+        }
+
+        with open(self.file_path("config.yaml"), "w") as config_file:
+            yaml.dump(data, config_file)
+    
+    def load(self):
+        app_sessions = wh.get_applications_and_sessions()
+        with open(self.file_path("config.yaml")) as config_file:
+            config = yaml.safe_load(config_file.read())
+            for cid,chan_conf in config["channels"].items():
+                name,color = chan_conf
+                if name in app_sessions:
+                    self.channels[cid].set_target_from_app_def(app_sessions)
+                else:
+                    self.channels[cid].set_target_from_app_def(wh.AppDef(name, color, []))
 
 class SharedMap(object):
     def __init__(self, shared):

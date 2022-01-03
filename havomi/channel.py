@@ -171,10 +171,6 @@ class Channel:
             self.set_master()
             return
 
-        if not app_def.sessions:
-                    self.unset_target()
-                    return
-
         self.name = app_def.name
         self.target = ApplicationVolume(app_def.name, app_def.sessions) 
 
