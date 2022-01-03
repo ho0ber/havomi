@@ -69,7 +69,6 @@ class ChannelMap(object):
             print(f"Found config file: {filename}")
             with open(filename) as config_file:
                 raw_config = config_file.read()
-                print(raw_config)
                 config = yaml.safe_load(raw_config)
             for cid,chan_conf in config["channels"].items():
                 name,color = chan_conf

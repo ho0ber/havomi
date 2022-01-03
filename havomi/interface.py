@@ -20,16 +20,6 @@ def chooser(prompt, choices):
                 return choices[selection]
         print("Bad input, try again.")
 
-def get_device_file():
-    """
-    Asks the user for a device config yaml. It offers a list from the devices directory built-in,
-    but also allows for a user to input a path manually.
-    """
-    devices_path = join(dirname(dirname(realpath(__file__))),"devices")
-    devices = [x for x in listdir(devices_path) if x.endswith(".yaml")]
-    dev_name = chooser("Select a device config", devices)
-    return join(devices_path, dev_name)
-
 def match_dev(name, dev_list):
     if name is None:
         return None
@@ -38,32 +28,44 @@ def match_dev(name, dev_list):
             return dev
     return None
 
+def find_connected_device(inputs, outputs):
+    devices_path = join(dirname(dirname(realpath(__file__))),"devices")
+    device_configs = [x for x in listdir(devices_path) if x.endswith(".yaml")]
+    dev_matches = {}
+    for config_filename in device_configs:
+        config_path = join(devices_path, config_filename)
+        with open(config_path) as config_file:
+            config = yaml.safe_load(config_file.read())
+        conf_input = config.get("device_names",{}).get("windows",{}).get("input")
+        conf_output = config.get("device_names",{}).get("windows",{}).get("output")
+        input_match = match_dev(conf_input, inputs)
+        output_match = match_dev(conf_output, outputs)
+        if input_match and output_match:
+            dev_matches[config_filename] = [config_path, input_match, output_match]
+    
+    if len(dev_matches.keys()) > 1:
+        chosen_device = chooser("Multiple devices detected; select one:", list(dev_matches.keys()))
+        path, input_dev, output_dev = dev_matches[chosen_device]
+    elif len(dev_matches.keys()) == 0:
+        chosen_device = chooser("No devices detected; select a config:", device_configs)
+        path = join(devices_path, chosen_device)
+        input_dev = chooser("Choose your input device", inputs)
+        output_dev = chooser("Choose your input device", outputs)
+    else:
+        chosen_device = list(dev_matches.keys())[0]
+        path, input_dev, output_dev = dev_matches[chosen_device]
+    
+    return path, input_dev, output_dev
+
 def get_config():
     """
     Prompts the user on the command-line for a device config file and, if necessary, input and
     output devices if the entries in the device config file don't match any connected midi devices.
     """
-    device_filename = get_device_file()
-    os = platform.system()
-
     inputs = mido.get_input_names()
     outputs = mido.get_output_names()
 
-    with open(device_filename) as device_file:
-        config = yaml.safe_load(device_file.read())
-
-    if os.lower() == "windows":
-        conf_input = config.get("device_names",{}).get("windows",{}).get("input")
-        conf_output = config.get("device_names",{}).get("windows",{}).get("output")
-    
-    input_dev = match_dev(conf_input, inputs)
-    output_dev = match_dev(conf_output, outputs)
-
-    if input_dev is None:
-        input_dev = chooser("Choose your input device", inputs)
-
-    if output_dev is None:
-        output_dev = chooser("Choose your input device", outputs)
+    device_filename, input_dev, output_dev = find_connected_device(inputs, outputs)
 
     return {
         "input": input_dev,

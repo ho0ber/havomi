@@ -1,5 +1,5 @@
 display_name: Behringer X-Touch Extender
-unique_id: abd6da9a-9e2b-4748-b5f1-aa6102179c07
+unique_id: behringer_x_touch_extender
 device_names:
   windows:
     input: X-Touch-Ext
