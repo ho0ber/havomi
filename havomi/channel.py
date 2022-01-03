@@ -166,17 +166,19 @@ class Channel:
         if app_def is None:
             self.unset_target()
             return
-        
+
+        if app_def.name == "Master":
+            self.set_master()
+            return
+
         if not app_def.sessions:
             self.unset_target()
             return
-        
+
+
+
         self.name = app_def.name
-    
-        if app_def.name == "Master":
-            self.target = DeviceVolume(app_def.name, app_def.sessions[0])
-        else:
-            self.target = ApplicationVolume(app_def.name, app_def.sessions) 
+        self.target = ApplicationVolume(app_def.name, app_def.sessions) 
 
         self.color = app_def.color
         self.get_level_from_target()
@@ -215,6 +217,7 @@ class Channel:
         self.color = "white"
         self.target = DeviceVolume(self.name, wh.get_master_volume_session())
         self.get_level_from_target()
+        print(f"Setting channel {self.cid} to Master")
 
     def lock(self, lock, dev):
         if self.touch_lock and not lock:

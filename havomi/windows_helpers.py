@@ -68,7 +68,7 @@ def get_applications_and_sessions():
             color = construct_color_from_hash(name) if name != "Sys" else "white"
             apps[name] = AppDef(name, color, sessions)
         
-        apps["Master"] = AppDef("Master", "white", [get_master_volume_session()])
+        apps["Master"] = AppDef("Master", None, None)
     except OSError as e:
         print(f"Got error: {e}")
         apps = {}
