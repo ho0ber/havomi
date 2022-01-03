@@ -172,8 +172,8 @@ class Channel:
             return
 
         if not app_def.sessions:
-            self.unset_target()
-            return
+                    self.unset_target()
+                    return
 
         self.name = app_def.name
         self.target = ApplicationVolume(app_def.name, app_def.sessions) 
@@ -223,3 +223,19 @@ class Channel:
             self.update_fader(dev)
         else:
             self.touch_lock = lock
+
+    def update_status(self, volume, mute, dev):
+        self.set_level_from_float(volume)
+        self.mute = mute
+        self.update_display(dev, fader=True)
+
+    def refresh_sessions(self, dev):
+        apps = wh.get_applications_and_sessions()
+        if self.target.name not in apps:
+            self.target.sessions = []
+            self.level = 0
+            self.mute = False
+        else:
+            self.target.sessions = apps[self.target.name].sessions()
+            self.get_level_from_target()
+        self.update_display(dev, fader=True)

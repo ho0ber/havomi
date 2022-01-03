@@ -1,3 +1,4 @@
+from havomi.target import ApplicationVolume, DeviceVolume
 import havomi.windows_helpers as wh
 
 def start(event_queue, dev, shared_map, channel_map):
@@ -80,8 +81,17 @@ def start(event_queue, dev, shared_map, channel_map):
                             active_modes.remove(match.func)
 
         if event_type == "system":
-            cid,level = event["channel"], event["level"]
-            channel_map.channels[cid].level = level
-            channel_map.channels[cid].update_scribble(dev)
-            channel_map.channels[cid].update_level(dev)
-            channel_map.channels[cid].update_fader(dev)
+            for channel in channel_map.channels.values():
+                if type(channel.target) == ApplicationVolume:
+                    if channel.target.name in event.apps:
+                        channel_sessions = set(s.InstanceIdentifier for s in channel.sessions)
+                        app_sessions = set(a["identifier"] for a in event.apps[channel.target.name])
+                        if channel_sessions != app_sessions:
+                            channel.refresh_sessions(dev)
+                        else:
+                            volume = min(a["level"] for a in event.apps[channel.target.name])
+                            mute = all(bool(a["mute"]) for a in event.apps[channel.target.name])
+                            channel.update_status(volume, mute, dev)
+                if type(channel.target) == DeviceVolume:
+                    if channel.target.name == "Master":
+                        channel.update_status(event["master"]["volume"], event["master"]["mute"], dev)
