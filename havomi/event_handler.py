@@ -49,6 +49,10 @@ def start(event_queue, dev, channel_map):
                         match.channel.toggle_mute()
                         match.channel.update_display(dev)
 
+                # Touch-lock channel
+                elif match.control.func == "touch":
+                    match.channel.lock(value == match.control.down_value, dev)
+
         if event_type == "system":
             cid,level = event["channel"], event["level"]
             channel_map.channels[cid].level = level

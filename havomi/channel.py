@@ -28,6 +28,7 @@ class Channel:
     color: str
     dev_binding: DeviceChannel
     target: Target
+    touch_lock: bool = False
 
     def update_display(self, dev, fader=False):
         self.update_scribble(dev)
@@ -79,6 +80,9 @@ class Channel:
         """
         Returns a midi message to update volume position
         """
+        if self.touch_lock:
+            return
+
         d = self.dev_binding
         c = d.find_control("volume")
         if c.feedback:
@@ -208,3 +212,10 @@ class Channel:
         self.color = "white"
         self.target = DeviceVolume(self.name, wh.get_master_volume_session())
         self.get_level_from_target()
+
+    def lock(self, lock, dev):
+        if self.touch_lock and not lock:
+            self.touch_lock = False
+            self.update_fader(dev)
+        else:
+            self.touch_lock = lock
