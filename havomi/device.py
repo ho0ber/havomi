@@ -18,6 +18,7 @@ class Device(object):
             self.config = yaml.safe_load(device_file.read())
         self.name = self.config["display_name"]
         self.device_channels = self.build_channels()
+        self.shared_controls = self.build_shared_controls()
         self.scribble = self.config.get("scribble", False)
         self.out_port = self.open_out_port()
 
@@ -36,14 +37,19 @@ class Device(object):
                     break
         return out_port
 
+    def build_shared_controls(self):
+        shared_controls = []
+        for con_conf in self.config.get("shared",[]):
+            shared_controls.append(self.build_control(con_conf))
+        return shared_controls
+
     def build_channels(self):
         channels = []
-        for g in self.config["groups"]:
-            for chan_config in g["channels"]:
-                channel = DeviceChannel(cid=chan_config["cid"], default=chan_config.get("default"), controls=[])
-                for con_conf in chan_config["controls"]:
-                    channel.controls.append(self.build_control(con_conf))
-                channels.append(channel)
+        for chan_config in self.config["channels"]:
+            channel = DeviceChannel(cid=chan_config["cid"], default=chan_config.get("default"), controls=[])
+            for con_conf in chan_config["controls"]:
+                channel.controls.append(self.build_control(con_conf))
+            channels.append(channel)
         return channels
     
     def build_control(self, conf):
@@ -101,6 +107,7 @@ class Device(object):
                 feedback=conf["fb"],
                 min=conf.get("min", 0),
                 max=conf.get("max", 127),
+                unset=conf.get("unset", 0)
             )
 
     def inflate(self, event_type):

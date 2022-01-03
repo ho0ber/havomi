@@ -6,7 +6,7 @@ import havomi.system_listener as system_listener
 import havomi.event_handler as event_handler
 from havomi.device import Device
 from havomi.channel import Channel
-from havomi.channel_map import ChannelMap
+from havomi.control_mappings import ChannelMap, SharedMap
 from havomi.interface import get_config
 
 DIR = pathlib.Path(__file__).parent.parent.resolve()
@@ -20,6 +20,7 @@ def init_channels(dev):
     Initialize the Channels with basic mappings to the DeviceChannels. This will also configure
     any DeviceChannels where default==master.
     """
+    shared_map = SharedMap(dev.shared_controls)
     channel_map = ChannelMap([
         Channel(
             cid=i,
@@ -38,7 +39,7 @@ def init_channels(dev):
             channel.set_master()
         channel.update_display(dev, fader=True)
 
-    return channel_map
+    return shared_map, channel_map
 
 def start():
     """
@@ -52,7 +53,7 @@ def start():
 
     dev_info = get_config()
     dev = Device(dev_info)
-    channel_map = init_channels(dev)
+    shared_map, channel_map = init_channels(dev)
     event_queue = multiprocessing.Queue()
 
     midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue,dev.in_name))
@@ -61,7 +62,7 @@ def start():
     midi_listener_process.start()
     system_listener_process.start()
 
-    event_handler.start(event_queue, dev, channel_map)
+    event_handler.start(event_queue, dev, shared_map, channel_map)
 
     midi_listener_process.terminate()
     system_listener_process.terminate()

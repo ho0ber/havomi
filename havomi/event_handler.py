@@ -1,6 +1,6 @@
 import havomi.windows_helpers as wh
 
-def start(event_queue, dev, channel_map):
+def start(event_queue, dev, shared_map, channel_map):
     """
     This is the main event handler loop. It listens to the multiprocessing event queue and reacts
     to events based on basic rules. The intent is for this code to be static for all devices, and
@@ -52,6 +52,26 @@ def start(event_queue, dev, channel_map):
                 # Touch-lock channel
                 elif match.control.func == "touch":
                     match.channel.lock(value == match.control.down_value, dev)
+
+            else:
+                match, value = shared_map.lookup(event)
+                if match is not None:
+                    if match.func == "quit":
+                        print("Got quit button; quitting.")
+                        break
+
+                    if match.func == "media_play_pause" and value == match.down_value:
+                        wh.send_key("VK_MEDIA_PLAY_PAUSE")
+
+                    if match.func == "media_stop" and value == match.down_value:
+                        wh.send_key("VK_MEDIA_STOP")
+
+                    if match.func == "media_prev" and value == match.down_value:
+                        wh.send_key("VK_MEDIA_PREV_TRACK")
+
+                    if match.func == "media_next" and value == match.down_value:
+                        wh.send_key("VK_MEDIA_NEXT_TRACK")
+
 
         if event_type == "system":
             cid,level = event["channel"], event["level"]

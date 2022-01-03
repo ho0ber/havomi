@@ -1,6 +1,6 @@
 import hashlib
 from typing import DefaultDict
-import win32gui, win32process
+import win32gui, win32process, win32api
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
@@ -70,3 +70,15 @@ def get_applications_and_sessions():
     apps["Master"] = AppDef("Master", "white", [get_master_volume_session()])
 
     return apps
+
+def send_key(key):
+    keys = {
+        "VK_MEDIA_NEXT_TRACK": 0xB0,
+        "VK_MEDIA_PREV_TRACK": 0xB1,
+        "VK_MEDIA_STOP": 0xB2,
+        "VK_MEDIA_PLAY_PAUSE": 0xB3,
+    }
+    # hwcode = win32api.MapVirtualKey(VK_MEDIA_PLAY_PAUSE, 0)
+    if key in keys:
+        hwcode = win32api.MapVirtualKey(keys[key], 0)
+        win32api.keybd_event(keys[key],hwcode)

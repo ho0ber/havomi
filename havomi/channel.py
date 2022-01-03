@@ -41,7 +41,7 @@ class Channel:
 
     def update_mute(self, dev):
         c = self.dev_binding.find_control("mute")
-        if c.feedback:
+        if c and c.feedback:
             if self.target:
                 value = c.down_value if self.mute else c.up_value
             else:
@@ -55,7 +55,7 @@ class Channel:
 
     def update_select(self, dev):
         c = self.dev_binding.find_control("select")
-        if c.feedback:
+        if c and c.feedback:
             if self.target:
                 if type(self.target) == ApplicationVolume:
                     value = c.down_value if (len(self.target.sessions) > 0) else c.up_value
@@ -85,7 +85,7 @@ class Channel:
 
         d = self.dev_binding
         c = d.find_control("volume")
-        if c.feedback:
+        if c and c.feedback:
             kwargs = {
                 c.midi_id_field: c.midi_id,
                 c.midi_value_field: self.level
@@ -106,7 +106,10 @@ class Channel:
         d = self.dev_binding
         c = d.find_control("level")
         if c and c.feedback:
-            display_level = int((self.level/127.0)*(c.max-c.min)+c.min)
+            if self.target or c.unset is None:
+                display_level = int((self.level/127.0)*(c.max-c.min)+c.min)
+            else:
+                display_level = c.unset
             kwargs = {
                 c.midi_id_field: c.midi_id,
                 c.midi_value_field: display_level

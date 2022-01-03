@@ -50,4 +50,5 @@ class Button(Control):
 class Meter(Control):
     min: int = 0
     max: int = 127
+    unset: int = 0
     pass
