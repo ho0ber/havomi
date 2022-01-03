@@ -8,7 +8,6 @@ class Target:
     ttype: 'application' or 'master'
     session: an audio session with methods to get and set volume
     """
-    # ttype: str
     name: str
 
     def session_count(self):
@@ -69,4 +68,3 @@ class DeviceVolume(Target):
     
     def set_mute(self, mute):
         self.session.SetMute(mute, None)
-

@@ -5,7 +5,6 @@ import mido.backends.rtmidi
 from os import listdir
 from os.path import join, dirname, realpath
 
-
 def chooser(prompt, choices):
     print(prompt)
     for i,choice in enumerate(choices):
@@ -20,7 +19,6 @@ def chooser(prompt, choices):
             if 0 <= selection < len(choices):
                 return choices[selection]
         print("Bad input, try again.")
-
 
 def get_device_file():
     """

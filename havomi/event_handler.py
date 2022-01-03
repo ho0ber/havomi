@@ -79,7 +79,6 @@ def start(event_queue, dev, shared_map, channel_map):
                         else:
                             active_modes.remove(match.func)
 
-
         if event_type == "system":
             cid,level = event["channel"], event["level"]
             channel_map.channels[cid].level = level

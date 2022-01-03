@@ -65,5 +65,3 @@ channels:
     default: master
     controls:
     - {func: volume, type: fader,  mtype: pw,   mid: 8,  fb: false, min: -8192, max: 8064}
-
-
