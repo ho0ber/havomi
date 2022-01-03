@@ -12,9 +12,10 @@ class ChannelMap(object):
     to see if we "care" about them. This lookup needs to be very fast, otherwise we risk
     slowing down handling of important events downstream.
     """
-    def __init__(self, channels):
+    def __init__(self, channels, device_id):
         self.channels = {channel.cid:channel for channel in channels}
         self.cmap = {}
+        self.device_id = device_id
         self.build_map()
 
     def build_map(self):
@@ -43,13 +44,19 @@ class ChannelMap(object):
         return self.channels[max(self.channels.keys())]
 
     def file_path(self, filename):
-        app_dir = os.path.join(os.getenv('LOCALAPPDATA'),"havomi")
-        return os.path.join(app_dir, filename)
+        # app_dir = os.path.join(os.getenv('LOCALAPPDATA'),"havomi")
+        abs_home = os.path.abspath(os.path.expanduser("~"))
+        app_dir = os.path.join(abs_home, ".havomi")
+        device_dir = os.path.join(app_dir, self.device_id)
+        if not os.path.exists(device_dir):
+            print(f"Directory {device_dir} doesn't exist; creating.")
+            os.mkdir(device_dir)
+        return os.path.join(device_dir, filename)
 
     def save(self):
         data = {
             "channels": {
-                cid: [channel.target.name, channel.color] for cid,channel in self.channels
+                cid: [channel.target.name, channel.color] for cid,channel in self.channels.items() if channel is not None and channel.target is not None
             }
         }
 
@@ -57,15 +64,20 @@ class ChannelMap(object):
             yaml.dump(data, config_file)
     
     def load(self):
-        app_sessions = wh.get_applications_and_sessions()
-        with open(self.file_path("config.yaml")) as config_file:
-            config = yaml.safe_load(config_file.read())
+        filename = self.file_path("config.yaml")
+        if os.path.exists(filename):
+            print(f"Found config file: {filename}")
+            with open(filename) as config_file:
+                raw_config = config_file.read()
+                print(raw_config)
+                config = yaml.safe_load(raw_config)
             for cid,chan_conf in config["channels"].items():
                 name,color = chan_conf
-                if name in app_sessions:
-                    self.channels[cid].set_target_from_app_def(app_sessions)
-                else:
-                    self.channels[cid].set_target_from_app_def(wh.AppDef(name, color, []))
+                self.channels[cid].set_target_from_app_def(wh.AppDef(name, color, []))
+            return True
+        else:
+            print(f"No config file found at {filename}; skipping load.")
+            return False
 
 class SharedMap(object):
     def __init__(self, shared):

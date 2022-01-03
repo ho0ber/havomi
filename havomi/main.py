@@ -32,7 +32,7 @@ def init_channels(dev):
             target=None
         )
         for i in range(len(dev.device_channels))
-    ])
+    ], dev.unique_id)
 
     for channel in channel_map.channels.values():
         if channel.dev_binding.default == "master":
@@ -62,7 +62,11 @@ def start():
     midi_listener_process.start()
     system_listener_process.start()
 
-    event_handler.start(event_queue, dev, shared_map, channel_map)
-
-    midi_listener_process.terminate()
-    system_listener_process.terminate()
+    try:
+        event_handler.start(event_queue, dev, shared_map, channel_map)
+    except Exception as e:
+        raise e
+    finally:
+        print("Shutting down listener processes")
+        midi_listener_process.terminate()
+        system_listener_process.terminate()

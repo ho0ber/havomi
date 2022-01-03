@@ -1,4 +1,5 @@
 display_name: Behringer X-Touch Mini
+unique_id: 7f1a0ac5-3f9b-49b2-b6e8-40a72887bd63
 device_names:
   windows:
     input: X-TOUCH MINI

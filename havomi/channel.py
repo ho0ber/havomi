@@ -90,6 +90,7 @@ class Channel:
                 c.midi_id_field: c.midi_id,
                 c.midi_value_field: self.level
             }
+            # print(f"Updating fader position for {self.cid} to {self.level}")
             dev.out_port.send(mido.Message(c.midi_type,**kwargs))
 
     def set_level(self, new_level):
@@ -140,8 +141,11 @@ class Channel:
         self.color = colors[new_index]
 
     def set_level_from_float(self, value):
-        prelim_level = 127*value
+        prelim_level = int(127*value)
+        if self.level == prelim_level:
+            return False
         self.level = int(prelim_level) if prelim_level >= 0 else 0
+        return True
 
     def get_level_from_target(self):
         self.set_level_from_float(self.target.get_volume())
@@ -221,9 +225,9 @@ class Channel:
             self.touch_lock = lock
 
     def update_status(self, volume, mute, dev):
-        self.set_level_from_float(volume)
         self.mute = mute
-        self.update_display(dev, fader=True)
+        if self.set_level_from_float(volume):
+            self.update_display(dev, fader=True)
 
     def refresh_sessions(self, dev):
         apps = wh.get_applications_and_sessions()
@@ -231,7 +235,8 @@ class Channel:
             self.target.sessions = []
             self.level = 0
             self.mute = False
+            print(f"Removing dead sessions for {self.target.name}")
         else:
-            self.target.sessions = apps[self.target.name].sessions()
+            self.target.sessions = apps[self.target.name].sessions
             self.get_level_from_target()
         self.update_display(dev, fader=True)

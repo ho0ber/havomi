@@ -21,6 +21,7 @@ class Device(object):
         self.shared_controls = self.build_shared_controls()
         self.scribble = self.config.get("scribble", False)
         self.out_port = self.open_out_port()
+        self.unique_id = self.config["unique_id"]
 
     def open_out_port(self):
         out_port = None

@@ -10,6 +10,11 @@ def start(event_queue, dev, shared_map, channel_map):
     """
     active_modes = set()
 
+    # No idea why I need to do this here rather than in main:init_channels
+    if channel_map.load():
+        for channel in channel_map.channels.values():
+            channel.update_display(dev, fader=True)
+
     while True:
         event_type,event = event_queue.get()
         if event_type == "midi":
@@ -25,6 +30,7 @@ def start(event_queue, dev, shared_map, channel_map):
                         if "assign_mod" in active_modes:
                             match.channel.change_target(inc)
                             match.channel.update_display(dev, fader=True)
+                            channel_map.save()
                         else:
                             match.channel.increment_level(inc)
                             match.channel.update_target_volume()
@@ -34,6 +40,7 @@ def start(event_queue, dev, shared_map, channel_map):
                 elif match.control.func == "assign":
                     inc = match.control.get_increment(value)
                     match.channel.change_target(inc)
+                    channel_map.save()
                     match.channel.update_display(dev, fader=True)
                 
                 # Select session from foreground window
@@ -43,6 +50,7 @@ def start(event_queue, dev, shared_map, channel_map):
                     else:
                         app_def = wh.get_active_window_app_def()
                         match.channel.set_target_from_app_def(app_def)
+                    channel_map.save()
                     match.channel.update_display(dev, fader=True)
 
                 # Mute channel
@@ -83,15 +91,17 @@ def start(event_queue, dev, shared_map, channel_map):
         if event_type == "system":
             for channel in channel_map.channels.values():
                 if type(channel.target) == ApplicationVolume:
-                    if channel.target.name in event.apps:
-                        channel_sessions = set(s.InstanceIdentifier for s in channel.sessions)
-                        app_sessions = set(a["identifier"] for a in event.apps[channel.target.name])
+                    if channel.target.name in event["apps"]:
+                        channel_sessions = set(s.InstanceIdentifier for s in channel.target.sessions)
+                        app_sessions = set(a["identifier"] for a in event["apps"][channel.target.name])
                         if channel_sessions != app_sessions:
                             channel.refresh_sessions(dev)
                         else:
-                            volume = min(a["level"] for a in event.apps[channel.target.name])
-                            mute = all(bool(a["mute"]) for a in event.apps[channel.target.name])
+                            volume = min(a["level"] for a in event["apps"][channel.target.name])
+                            mute = all(bool(a["mute"]) for a in event["apps"][channel.target.name])
                             channel.update_status(volume, mute, dev)
+                    elif channel.target.sessions:
+                        channel.refresh_sessions(dev)
                 if type(channel.target) == DeviceVolume:
                     if channel.target.name == "Master":
-                        channel.update_status(event["master"]["volume"], event["master"]["mute"], dev)
+                        channel.update_status(event["master"]["level"], event["master"]["mute"], dev)
