@@ -1,12 +1,8 @@
-import hashlib
 import mido
 import mido.backends.rtmidi
 from dataclasses import dataclass
-from ctypes import cast, POINTER
-from comtypes import CLSCTX_ALL
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-from havomi.device import Device, DeviceChannel
+from havomi.device import DeviceChannel
 from havomi.target import ApplicationVolume, DeviceVolume, SystemSoundsVolume, Target
 from havomi.scribble import scribble
 import havomi.windows_helpers as wh
@@ -28,35 +24,49 @@ class Channel:
     cid: int
     name: str 
     level: int
+    mute: bool
     color: str
     dev_binding: DeviceChannel
     target: Target
 
-    def update_display(self, dev):
+    def update_display(self, dev, fader=False):
         self.update_scribble(dev)
         self.update_level(dev)
         self.update_meter(dev)
-        self.update_fader(dev)
-        self.update_buttons(dev)
-    
-    def update_buttons(self, dev):
+        self.update_select(dev)
+        self.update_mute(dev)
+        if fader:
+            self.update_fader(dev)
+
+    def update_mute(self, dev):
+        c = self.dev_binding.find_control("mute")
+        if c.feedback:
+            if self.target:
+                value = c.down_value if self.mute else c.up_value
+            else:
+                value = c.up_value
+
+            kwargs = {
+                c.midi_id_field: c.midi_id,
+                c.midi_value_field: value
+            }
+            dev.out_port.send(mido.Message(c.midi_type,**kwargs))
+
+    def update_select(self, dev):
         c = self.dev_binding.find_control("select")
         if c.feedback:
             if self.target:
                 if type(self.target) == ApplicationVolume:
                     value = c.down_value if (len(self.target.sessions) > 0) else c.up_value
-                    kwargs = {
-                        c.midi_id_field: c.midi_id,
-                        c.midi_value_field: value
-                    }
-                    dev.out_port.send(mido.Message(c.midi_type,**kwargs))
+                else:
+                    value = c.up_value
             else:
                 value = c.up_value
-                kwargs = {
-                    c.midi_id_field: c.midi_id,
-                    c.midi_value_field: value
-                }
-                dev.out_port.send(mido.Message(c.midi_type,**kwargs))
+            kwargs = {
+                c.midi_id_field: c.midi_id,
+                c.midi_value_field: value
+            }
+            dev.out_port.send(mido.Message(c.midi_type,**kwargs))
 
     def update_scribble(self, dev):
         """
@@ -127,19 +137,15 @@ class Channel:
         self.level = int(prelim_level) if prelim_level >= 0 else 0
 
     def get_level_from_target(self):
-        if type(self.target) == ApplicationVolume:
-            self.set_level_from_float(self.target.sessions[0].SimpleAudioVolume.GetMasterVolume())
-        elif type(self.target) == DeviceVolume:
-            self.set_level_from_float(self.target.session.GetMasterVolumeLevelScalar())
+        self.set_level_from_float(self.target.get_volume())
+        self.mute = bool(self.target.get_mute())
 
     def update_target_volume(self):
-        if type(self.target) == ApplicationVolume:
-            for session in self.target.sessions:
-                session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
-        elif type(self.target) == SystemSoundsVolume:
-            self.target.session.SimpleAudioVolume.SetMasterVolume(self.level/127, None)
-        elif type(self.target) == DeviceVolume:
-            self.target.session.SetMasterVolumeLevelScalar(self.level/127, None)
+        self.target.set_volume(self.level/127)
+
+    def toggle_mute(self):
+        self.mute = not self.mute
+        self.target.set_mute(self.mute)
 
     def increment_level(self, inc):
         new_level = self.level + inc
@@ -159,10 +165,15 @@ class Channel:
             return
         
         self.name = app_def.name
-        self.target = ApplicationVolume(app_def.name, app_def.sessions)
+    
+        if app_def.name == "Master":
+            self.target = DeviceVolume(app_def.name, app_def.sessions[0])
+        else:
+            self.target = ApplicationVolume(app_def.name, app_def.sessions) 
+
         self.color = app_def.color
         self.get_level_from_target()
-        print(f"Setting channel {self.cid} to {self.name} with {len(self.target.sessions)} sessions ")
+        print(f"Setting channel {self.cid} to {self.name} with {self.target.session_count()} sessions ")
 
     def unset_target(self):
         self.target = None
@@ -173,8 +184,11 @@ class Channel:
 
     def change_target(self, inc):
         apps = wh.get_applications_and_sessions()
-        app_names = sorted(apps.keys())
-        index = app_names.index(self.target.name) if self.target is not None else None
+        app_names = sorted(list(set(apps.keys()).difference(["Master"]))) + ["Master"]
+        try:
+            index = app_names.index(self.target.name) if self.target is not None else None
+        except ValueError:
+            index = None
 
         if index is None:
             if inc > 0:
@@ -193,4 +207,4 @@ class Channel:
         self.name = "Master"
         self.color = "white"
         self.target = DeviceVolume(self.name, wh.get_master_volume_session())
-        self.level = int(self.target.session.GetMasterVolumeLevelScalar()*127)
+        self.get_level_from_target()

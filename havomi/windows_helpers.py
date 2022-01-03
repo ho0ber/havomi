@@ -66,5 +66,7 @@ def get_applications_and_sessions():
     for name,sessions in app_sessions.items():
         color = construct_color_from_hash(name) if name != "Sys" else "white"
         apps[name] = AppDef(name, color, sessions)
+    
+    apps["Master"] = AppDef("Master", "white", [get_master_volume_session()])
 
     return apps

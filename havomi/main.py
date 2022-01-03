@@ -26,6 +26,7 @@ def init_channels(dev):
             name="Unused",
             color="black",
             level=0,
+            mute=False,
             dev_binding=dev.device_channels[i],
             target=None
         )
@@ -35,7 +36,7 @@ def init_channels(dev):
     for channel in channel_map.channels.values():
         if channel.dev_binding.default == "master":
             channel.set_master()
-        channel.update_display(dev)
+        channel.update_display(dev, fader=True)
 
     return channel_map
 

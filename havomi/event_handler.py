@@ -27,7 +27,7 @@ def start(event_queue, dev, channel_map):
                 elif match.control.func == "assign":
                     inc = match.control.get_increment(value)
                     match.channel.change_target(inc)
-                    match.channel.update_display(dev)
+                    match.channel.update_display(dev, fader=True)
                 
                 # Quit by hitting select on master channel
                 elif match.control.func == "select" and match.channel.target and match.channel.target.name == "Master":
@@ -41,7 +41,13 @@ def start(event_queue, dev, channel_map):
                     else:
                         app_def = wh.get_active_window_app_def()
                         match.channel.set_target_from_app_def(app_def)
-                    match.channel.update_display(dev)
+                    match.channel.update_display(dev, fader=True)
+
+                # Mute channel
+                elif match.control.func == "mute" and match.control.down_value == value:
+                    if match.channel.target:
+                        match.channel.toggle_mute()
+                        match.channel.update_display(dev)
 
         if event_type == "system":
             cid,level = event["channel"], event["level"]
