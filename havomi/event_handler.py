@@ -1,3 +1,4 @@
+from collections import defaultdict
 from havomi.target import ApplicationVolume, DeviceVolume
 import havomi.windows_helpers as wh
 
@@ -9,6 +10,7 @@ def start(event_queue, dev, shared_map, channel_map):
     behaviors of various controls.
     """
     active_modes = set()
+    active_channel_modes = defaultdict(set)
 
     # No idea why I need to do this here rather than in main:init_channels
     if channel_map.load():
@@ -39,7 +41,11 @@ def start(event_queue, dev, shared_map, channel_map):
                 # Assign session to a channel with a knob
                 elif match.control.func == "assign":
                     inc = match.control.get_increment(value)
-                    match.channel.change_target(inc)
+                    if "color_mod" in active_channel_modes[match.channel.cid]:
+                        match.channel.change_color(inc)
+                    else:
+                        match.channel.change_target(inc)
+
                     channel_map.save()
                     match.channel.update_display(dev, fader=True)
                 
@@ -63,6 +69,13 @@ def start(event_queue, dev, shared_map, channel_map):
                 elif match.control.func == "touch":
                     match.channel.lock(value == match.control.down_value, dev)
 
+                if match.control.func.endswith("_mod"):
+                    if value == match.control.down_value:
+                        print(f"{match.channel.cid}:{match.control.func} enabled")
+                        active_channel_modes[match.channel.cid].add(match.control.func)
+                    else:
+                        print(f"{match.channel.cid}:{match.control.func} disabled")
+                        active_channel_modes[match.channel.cid].remove(match.control.func)
             else:
                 match, value = shared_map.lookup(event)
                 if match is not None:
@@ -84,8 +97,10 @@ def start(event_queue, dev, shared_map, channel_map):
 
                     if match.func.endswith("_mod"):
                         if value == match.down_value:
+                            print(f"{match.func} enabled")
                             active_modes.add(match.func)
                         else:
+                            print(f"{match.func} disabled")
                             active_modes.remove(match.func)
 
         if event_type == "system":
