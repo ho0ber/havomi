@@ -1,9 +1,8 @@
-import platform
 import yaml
 import mido
 import mido.backends.rtmidi
 from os import listdir
-from os.path import join, dirname, realpath
+from os.path import join, dirname, realpath, abspath, exists, expanduser
 
 def chooser(prompt, choices):
     print(prompt)
@@ -28,12 +27,24 @@ def match_dev(name, dev_list):
             return dev
     return None
 
+def custom_device_files():
+    abs_home = abspath(expanduser("~"))
+    app_dir = join(abs_home, ".havomi")
+    custom_dev = join(app_dir, "custom")
+    if exists(custom_dev):
+        print("Found custom files:")
+        return [(f"custom:{x}",join(custom_dev, x)) for x in listdir(custom_dev) if x.endswith(".yaml")]
+    else:
+        print(f"{custom_dev} does not exist")
+        return []
+
 def find_connected_device(inputs, outputs):
     devices_path = join(dirname(dirname(realpath(__file__))),"devices")
-    device_configs = [x for x in listdir(devices_path) if x.endswith(".yaml")]
+    device_configs = [(x,join(devices_path, x)) for x in listdir(devices_path) if x.endswith(".yaml")]
+    device_configs += custom_device_files()
+
     dev_matches = {}
-    for config_filename in device_configs:
-        config_path = join(devices_path, config_filename)
+    for config_filename,config_path in device_configs:
         with open(config_path) as config_file:
             config = yaml.safe_load(config_file.read())
         conf_input = config.get("device_names",{}).get("windows",{}).get("input")
