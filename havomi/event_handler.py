@@ -2,7 +2,7 @@ from collections import defaultdict
 from havomi.target import ApplicationVolume, DeviceVolume
 import havomi.windows_helpers as wh
 
-def start(event_queue, dev, shared_map, channel_map):
+def start(event_queue, dev, shared_map, channel_map, systray):
     """
     This is the main event handler loop. It listens to the multiprocessing event queue and reacts
     to events based on basic rules. The intent is for this code to be static for all devices, and
@@ -120,3 +120,8 @@ def start(event_queue, dev, shared_map, channel_map):
                 if type(channel.target) == DeviceVolume:
                     if channel.target.name == "Master":
                         channel.update_status(event["master"]["level"], event["master"]["mute"], dev)
+
+        if event_type == "interface":
+            if event["action"] == "quit":
+                print("Got quit from menu; quitting.")
+                break

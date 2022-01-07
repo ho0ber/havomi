@@ -1,6 +1,7 @@
 import yaml
 import mido
 import mido.backends.rtmidi
+from infi.systray import SysTrayIcon
 from os import listdir
 from os.path import join, dirname, realpath, abspath, exists, expanduser
 
@@ -83,3 +84,29 @@ def get_config():
         "output": output_dev,
         "device": device_filename,
     }
+
+def systray(event_queue):
+
+    def say_hello(systray):
+        print("Hello, World!")
+    
+    def quit(systray):
+        event_queue.put(("interface", {"action": "quit"}))
+
+    def assign(systray):
+        
+        event_queue.put(("interface", {"action": "quit"}))
+    
+    def change_color(systray):
+        event_queue.put(("interface", {"action": "quit"}))
+
+    menu_options = (
+        ("Say Hello", None, say_hello),
+        ("Fader 1", None, (
+            ("Assign", None, assign),
+            ("Change color", None, change_color),
+        ))
+    )
+    systray = SysTrayIcon("icon.ico", "Example tray icon", menu_options, on_quit=quit)
+    systray.start()
+    return systray
