@@ -1,0 +1,57 @@
+display_name: nanoKONTROL2
+unique_id: nanoKONTROL2
+device_names:
+  windows:
+    input: nanoKONTROL2
+    output: nanoKONTROL2
+
+shared:
+  - {func: media_prev,       type: button, mtype: cc, mid: 43, fb: false}
+  - {func: media_next,       type: button, mtype: cc, mid: 44, fb: false}
+  - {func: media_stop,       type: button, mtype: cc, mid: 42, fb: false}
+  - {func: media_play_pause, type: button, mtype: cc, mid: 41, fb: false}
+  - {func: quit,             type: button, mtype: cc, mid: 12, fb: false}
+
+
+channels:
+  - cid: 0
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 0,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 32, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 48, fb: true}
+  - cid: 1
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 1,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 33, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 49, fb: true}
+  - cid: 2
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 2,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 34, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 50, fb: true}
+  - cid: 3
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 3,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 35, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 51, fb: true}
+  - cid: 4
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 4,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 36, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 52, fb: true}
+  - cid: 5
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 5,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 37, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 53, fb: true}
+  - cid: 6
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 6,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 38, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 54, fb: true}
+  - cid: 7
+    default: master
+    controls:
+    - {func: volume, type: fader,  mtype: cc, mid: 7,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 39, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 55, fb: true}
