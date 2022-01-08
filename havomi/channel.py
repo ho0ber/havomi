@@ -59,6 +59,8 @@ class Channel:
             if self.target:
                 if type(self.target) == ApplicationVolume:
                     value = c.down_value if (len(self.target.sessions) > 0) else c.up_value
+                elif type(self.target) == DeviceVolume:
+                    value = c.down_value
                 else:
                     value = c.up_value
             else:
