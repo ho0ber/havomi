@@ -93,19 +93,43 @@ def systray(event_queue):
     def quit(systray):
         event_queue.put(("interface", {"action": "quit"}))
 
-    def assign(systray):
-        
-        event_queue.put(("interface", {"action": "quit"}))
-    
     def change_color(systray):
         event_queue.put(("interface", {"action": "quit"}))
 
     menu_options = (
         ("Say Hello", None, say_hello),
-        ("Fader 1", None, (
-            ("Assign", None, assign),
+        ("Fader 0", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 0}))),
             ("Change color", None, change_color),
-        ))
+        )),
+        ("Fader 1", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 1}))),
+            ("Change color", None, change_color),
+        )),
+        ("Fader 2", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 2}))),
+            ("Change color", None, change_color),
+        )),
+        ("Fader 3", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 3}))),
+            ("Change color", None, change_color),
+        )),
+        ("Fader 4", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 4}))),
+            ("Change color", None, change_color),
+        )),
+        ("Fader 5", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 5}))),
+            ("Change color", None, change_color),
+        )),
+        ("Fader 6", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 6}))),
+            ("Change color", None, change_color),
+        )),
+        ("Fader 7", None, (
+            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 7}))),
+            ("Change color", None, change_color),
+        )),
     )
     systray = SysTrayIcon("icon.ico", "Example tray icon", menu_options, on_quit=quit)
     systray.start()

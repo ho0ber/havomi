@@ -83,19 +83,19 @@ def start(event_queue, dev, shared_map, channel_map, systray):
                         print("Got quit button; quitting.")
                         break
 
-                    if match.func == "media_play_pause" and value == match.down_value:
+                    elif match.func == "media_play_pause" and value == match.down_value:
                         wh.send_key("VK_MEDIA_PLAY_PAUSE")
 
-                    if match.func == "media_stop" and value == match.down_value:
+                    elif match.func == "media_stop" and value == match.down_value:
                         wh.send_key("VK_MEDIA_STOP")
 
-                    if match.func == "media_prev" and value == match.down_value:
+                    elif match.func == "media_prev" and value == match.down_value:
                         wh.send_key("VK_MEDIA_PREV_TRACK")
 
-                    if match.func == "media_next" and value == match.down_value:
+                    elif match.func == "media_next" and value == match.down_value:
                         wh.send_key("VK_MEDIA_NEXT_TRACK")
 
-                    if match.func.endswith("_mod"):
+                    elif match.func.endswith("_mod"):
                         if value == match.down_value:
                             print(f"{match.func} enabled")
                             active_modes.add(match.func)
@@ -117,7 +117,7 @@ def start(event_queue, dev, shared_map, channel_map, systray):
                             channel.update_status(volume, mute, dev)
                     elif channel.target.sessions:
                         channel.refresh_sessions(dev)
-                if type(channel.target) == DeviceVolume:
+                elif type(channel.target) == DeviceVolume:
                     if channel.target.name == "Master":
                         channel.update_status(event["master"]["level"], event["master"]["mute"], dev)
 
@@ -125,3 +125,5 @@ def start(event_queue, dev, shared_map, channel_map, systray):
             if event["action"] == "quit":
                 print("Got quit from menu; quitting.")
                 break
+            elif event["action"] == "assign":
+                print(f"Got assign event: {event}")
