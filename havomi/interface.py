@@ -4,6 +4,8 @@ import mido.backends.rtmidi
 from infi.systray import SysTrayIcon
 from os import listdir
 from os.path import join, dirname, realpath, abspath, exists, expanduser
+from PIL import Image, ImageDraw
+import pystray
 
 def chooser(prompt, choices):
     print(prompt)
@@ -84,29 +86,61 @@ def get_config():
         "output": output_dev,
         "device": device_filename,
     }
+def create_image():
+    # Generate an image and draw a pattern
+    width, height = 64, 64
+    color1 = "green"
+    color2 = "red"
+    image = Image.new('RGB', (width, height), color1)
+    dc = ImageDraw.Draw(image)
+    dc.rectangle(
+        (width // 2, 0, width, height // 2),
+        fill=color2)
+    dc.rectangle(
+        (0, height // 2, width // 2, height),
+        fill=color2)
+
+    return image
+
+state = False
+
+
 
 def systray(event_queue):
+    def on_clicked(icon, item):
 
-    def say_hello(systray):
-        print("Hello, World!")
+        global state
+        state = not item.checked
     
-    def quit(systray):
-        event_queue.put(("interface", {"action": "quit"}))
-
-    def assign(systray):
-        
-        event_queue.put(("interface", {"action": "quit"}))
-    
-    def change_color(systray):
-        event_queue.put(("interface", {"action": "quit"}))
-
-    menu_options = (
-        ("Say Hello", None, say_hello),
-        ("Fader 1", None, (
-            ("Assign", None, assign),
-            ("Change color", None, change_color),
-        ))
+    menu = pystray.Menu(
+        pystray.MenuItem(
+            'Checkable',
+            on_clicked,
+            checked=lambda item: state
+        ),
     )
-    systray = SysTrayIcon("icon.ico", "Example tray icon", menu_options, on_quit=quit)
-    systray.start()
-    return systray
+
+    icon = pystray.Icon('test', create_image(), menu=menu)
+
+    icon.notify("Systray started!", title=None)
+    icon.run_detached()
+
+
+
+    menu = pystray.Menu(
+        pystray.MenuItem(
+            'Checkable',
+            on_clicked,
+            checked=lambda item: state
+        ),
+            pystray.MenuItem(
+            'Checkable',
+            on_clicked,
+            checked=lambda item: state
+        ),
+    )
+    icon.menu = menu
+    icon.update_menu()
+    icon.notify("Message", title="HELLO")
+    icon.update_menu()
+    return icon

@@ -57,6 +57,7 @@ def start():
     event_queue = multiprocessing.Queue()
 
     st = systray(event_queue)
+    st.notify("Systray started!", title=None)
 
     midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue,dev.in_name))
     system_listener_process = multiprocessing.Process(target = system_listener.start, args=(event_queue,))
@@ -72,4 +73,4 @@ def start():
         print("Shutting down listener processes")
         midi_listener_process.terminate()
         system_listener_process.terminate()
-        st.shutdown()
+        st.stop()
