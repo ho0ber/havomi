@@ -6,52 +6,52 @@ device_names:
     output: nanoKONTROL Studio
 
 shared:
-  - {func: media_prev,       type: button, mtype: cc, mid: 60, fb: false}
-  - {func: media_next,       type: button, mtype: cc, mid: 61, fb: false}
+  - {func: media_prev,       type: button, mtype: cc, mid: 62, fb: false}
+  - {func: media_next,       type: button, mtype: cc, mid: 81, fb: false}
   - {func: media_stop,       type: button, mtype: cc, mid: 63, fb: false}
   - {func: media_play_pause, type: button, mtype: cc, mid: 80, fb: false}
-  - {func: quit,             type: button, mtype: cc, mid: 81, fb: false}
+  - {func: quit,             type: button, mtype: cc, mid: 57, fb: false}
 
 
 channels:
   - cid: 0
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 2,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 46, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 21, fb: true}
+    - {func: volume, type: fader,  mtype: cc, mid: 2,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 46, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 21, fb: true}
   - cid: 1
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 3,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 47, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 22, fb: true}
+    - {func: volume,  type: fader, mtype: cc, mid: 3,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 47, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 22, fb: true}
   - cid: 2
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 4,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 48, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 23, fb: true}
+    - {func: volume, type: fader,  mtype: cc, mid: 4,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 48, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 23, fb: true}
   - cid: 3
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 5,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 49, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 24, fb: true}
+    - {func: volume, type: fader,  mtype: cc, mid: 5,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 49, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 24, fb: true}
   - cid: 4
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 6,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 50, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 25, fb: true}
+    - {func: volume, type: fader,  mtype: cc, mid: 6,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 50, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 25, fb: true}
   - cid: 5
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 6,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 50, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 25, fb: true}
+    - {func: volume, type: fader,  mtype: cc, mid: 8,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 51, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 26, fb: true}
   - cid: 6
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 8,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 51, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 26, fb: true}
+    - {func: volume, type: fader,  mtype: cc, mid: 9,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 52, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 27, fb: true}
   - cid: 7
     default: master
     controls:
-    - {func: fader,  type: fader,  mtype: cc,   mid: 9,  fb: false, min: 0, max: 127}
-    - {func: select, type: button, mtype: note, mid: 52, fb: true}
-    - {func: mute,   type: button, mtype: note, mid: 27, fb: true}
+    - {func: volume, type: fader,  mtype: cc, mid: 12,  fb: false, min: 0, max: 127}
+    - {func: select, type: button, mtype: cc, mid: 53, fb: true}
+    - {func: mute,   type: button, mtype: cc, mid: 28, fb: true}
