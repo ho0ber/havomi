@@ -27,6 +27,10 @@ The biggest advantage, by far, is that I will be able to personally contribute s
 To help test or contribute, I encourage you to join our discord: https://discord.gg/BtVTYxp
 
 ## Download
+### Releases
+Visit the [releases page](https://github.com/ho0ber/havomi/tags).
+
+### Development Build
 To download a development build, **log in** to a github account and then go to the [Build executable actions page](https://github.com/ho0ber/havomi/actions/workflows/build.yml). Click the most recent completed workflow run and scroll to the bottom to find the Windows-Binary artifact, and download.
 
 ## Similar Projects
