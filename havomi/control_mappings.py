@@ -47,6 +47,9 @@ class ChannelMap(object):
         # app_dir = os.path.join(os.getenv('LOCALAPPDATA'),"havomi")
         abs_home = os.path.abspath(os.path.expanduser("~"))
         app_dir = os.path.join(abs_home, ".havomi")
+        if not os.path.exists(app_dir):
+            print(f"Directory {app_dir} doesn't exist; creating.")
+            os.mkdir(app_dir)
         device_dir = os.path.join(app_dir, self.device_id)
         if not os.path.exists(device_dir):
             print(f"Directory {device_dir} doesn't exist; creating.")
