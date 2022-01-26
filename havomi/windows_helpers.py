@@ -76,6 +76,9 @@ def get_applications_and_sessions():
 
     return apps
 
+def get_application_names():
+    return get_applications_and_sessions().keys()
+
 def send_key(key):
     keys = {
         "VK_MEDIA_NEXT_TRACK": 0xB0,

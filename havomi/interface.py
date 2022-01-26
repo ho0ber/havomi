@@ -1,7 +1,11 @@
+from datetime import datetime
+from webbrowser import get
 import yaml
 import mido
 import mido.backends.rtmidi
-from infi.systray import SysTrayIcon
+from havomi.windows_helpers import get_application_names
+from PIL import Image, ImageDraw
+from pystray import Icon, Menu, MenuItem
 from os import listdir
 from os.path import join, dirname, realpath, abspath, exists, expanduser
 
@@ -85,52 +89,68 @@ def get_config():
         "device": device_filename,
     }
 
-def systray(event_queue):
+def systray(event_queue, num_channels):
 
     def say_hello(systray):
         print("Hello, World!")
     
-    def quit(systray):
-        event_queue.put(("interface", {"action": "quit"}))
+    # def quit(systray):
+    #     event_queue.put(("interface", {"action": "quit"}))
 
     def change_color(systray):
         event_queue.put(("interface", {"action": "quit"}))
+    
+    # def apps():
+    #     mi = []
+    #     for app_name in get_application_names():
+    #         mi.append(MenuItem(
+    #             app_name,
+    #             lambda _,an=app_name: event_queue.put(("interface", {"action": "assign", "app": app_name, "channel": 1}))
+    #         ))
+    #     return mi
 
-    menu_options = (
-        ("Say Hello", None, say_hello),
-        ("Fader 0", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 0}))),
-            ("Change color", None, change_color),
-        )),
-        ("Fader 1", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 1}))),
-            ("Change color", None, change_color),
-        )),
-        ("Fader 2", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 2}))),
-            ("Change color", None, change_color),
-        )),
-        ("Fader 3", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 3}))),
-            ("Change color", None, change_color),
-        )),
-        ("Fader 4", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 4}))),
-            ("Change color", None, change_color),
-        )),
-        ("Fader 5", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 5}))),
-            ("Change color", None, change_color),
-        )),
-        ("Fader 6", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 6}))),
-            ("Change color", None, change_color),
-        )),
-        ("Fader 7", None, (
-            ("Assign", None, lambda x: event_queue.put(("interface", {"action": "assign", "channel": 7}))),
-            ("Change color", None, change_color),
-        )),
-    )
-    systray = SysTrayIcon("icon.ico", "Example tray icon", menu_options, on_quit=quit)
-    systray.start()
-    return systray
+    def items():
+        mi = []
+        for i in range(num_channels):
+            mi.append(
+                MenuItem(
+                    f"Fader {i}",
+                    Menu(
+                        MenuItem(
+                            lambda _,i=i: f"Assign channel {i}",
+                            Menu(lambda i=i: [MenuItem(an, lambda _,i=i,an=an: event_queue.put(("interface", {"action": "assign", "app": an, "channel": i}))) for an in get_application_names()]),
+                        ),
+                        MenuItem("Change color", change_color),
+                    )
+                )
+            )
+        mi.append(MenuItem("Quit", lambda : event_queue.put(("interface", {"action": "quit"}))))
+        return mi
+
+
+    menu_options = Menu(items)
+        
+    # Call this when we update externally!
+    #Icon.update_menu
+
+
+    def create_image():
+        # Generate an image and draw a pattern
+        width = 64
+        height = 64
+        color1 = "red"
+        color2 = "black"
+        image = Image.new('RGB', (width, height), color1)
+        dc = ImageDraw.Draw(image)
+        dc.rectangle(
+            (width // 2, 0, width, height // 2),
+            fill=color2)
+        dc.rectangle(
+            (0, height // 2, width // 2, height),
+            fill=color2)
+
+        return image
+
+    st = Icon("Havomi", create_image(), menu=menu_options,)
+    st.run_detached()
+    return st
