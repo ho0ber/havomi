@@ -57,8 +57,6 @@ def start():
     event_queue = multiprocessing.Queue()
     update_queue = multiprocessing.Queue()
 
-    # st = systray(event_queue, len(channel_map.channels.keys()))
-
     midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue,dev.in_name))
     system_listener_process = multiprocessing.Process(target = system_listener.start, args=(event_queue,))
     systray_process = multiprocessing.Process(target = systray, args=(event_queue, update_queue, len(channel_map.channels.keys())))
