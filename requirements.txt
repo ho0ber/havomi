@@ -3,4 +3,5 @@ python-rtmidi==1.4.9
 mido==1.2.10
 PyYAML==6.0
 pywin32==300
-# uses nuitka and zstandard at build time
+pystray==0.19.2
+Pillow==9.0.0
