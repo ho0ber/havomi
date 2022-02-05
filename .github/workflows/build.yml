@@ -33,7 +33,10 @@ jobs:
         python -m pip uninstall enum34 -y
     - name: Make Havomi Executable 
       run: |
-        pyinstaller -F --add-data "devices;devices" -n havomi main.py
+        pyinstaller -F --add-data "devices;devices" --noconsole -n havomi main.py
+    - name: Make Havomi Debug Executable 
+      run: |
+        pyinstaller -F --add-data "devices;devices" -n havomi_debug main.py
     - name: Make MIDI Tool Executable
       run: |
         pyinstaller -F -n midi_tool scripts/midi_tool.py
@@ -42,8 +45,13 @@ jobs:
       with:
           name: Havomi
           path: dist/havomi.exe
+    - name: Upload havomi_debug artifact
+      uses: actions/upload-artifact@v2
+      with:
+          name: Havomi Debug Tools
+          path: dist/havomi_debug.exe
     - name: Upload MIDI Tool artifact
       uses: actions/upload-artifact@v2
       with:
-          name: Havomi
+          name: Havomi Debug Tools
           path: dist/midi_tool.exe
