@@ -7,7 +7,7 @@ import havomi.event_handler as event_handler
 from havomi.device import Device
 from havomi.channel import Channel
 from havomi.control_mappings import ChannelMap, SharedMap
-from havomi.interface import get_config
+from havomi.interface import get_config, systray
 
 DIR = pathlib.Path(__file__).parent.parent.resolve()
 DEVICES = DIR.joinpath("devices")
@@ -55,18 +55,22 @@ def start():
     dev = Device(dev_info)
     shared_map, channel_map = init_channels(dev)
     event_queue = multiprocessing.Queue()
+    update_queue = multiprocessing.Queue()
 
     midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue,dev.in_name))
     system_listener_process = multiprocessing.Process(target = system_listener.start, args=(event_queue,))
+    systray_process = multiprocessing.Process(target = systray, args=(event_queue, update_queue, len(channel_map.channels.keys())))
 
     midi_listener_process.start()
     system_listener_process.start()
+    systray_process.start()
 
     try:
-        event_handler.start(event_queue, dev, shared_map, channel_map)
+        event_handler.start(event_queue, dev, shared_map, channel_map, update_queue)
     except Exception as e:
         raise e
     finally:
         print("Shutting down listener processes")
         midi_listener_process.terminate()
         system_listener_process.terminate()
+        systray_process.terminate()
