@@ -1,5 +1,3 @@
-from datetime import datetime
-from webbrowser import get
 import yaml
 import mido
 import mido.backends.rtmidi
@@ -178,6 +176,7 @@ class AppState(object):
     def __init__(self, num_channels, event_queue):
         self.num_channels = num_channels
         self.event_queue = event_queue
+        self.application_names = get_application_names()
         self.gen_channels()
     
     def gen_channels(self):
@@ -188,9 +187,15 @@ class AppState(object):
                 "name": None,
             }
     def update(self, state):
-        updated = state["num_channels"] != self.num_channels or state["channels"] != self.channels
+        apps = get_application_names()
+        updated = any([
+            state["num_channels"] != self.num_channels,
+            state["channels"] != self.channels,
+            apps != self.application_names,
+        ])
         self.num_channels = state["num_channels"]
         self.channels = state["channels"]
+        self.application_names = apps
         return updated
 
 def systray(event_queue, update_queue, num_channels):
