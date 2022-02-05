@@ -54,6 +54,16 @@ def get_active_window_app_def():
 
     return AppDef(process_name, color, app_sessions)
 
+def get_app_def_from_name(name):
+    sessions = AudioUtilities.GetAllSessions()
+    app_sessions = []
+    for session in sessions:
+        if session.Process and session.Process.name() == name:
+            app_sessions.append(session)
+    color = construct_color_from_hash(name)
+
+    return AppDef(name, color, app_sessions)
+
 def get_applications_and_sessions():
     try:
         sessions = AudioUtilities.GetAllSessions()

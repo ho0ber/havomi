@@ -80,6 +80,12 @@ class ChannelMap(object):
         else:
             print(f"No config file found at {filename}; skipping load.")
             return False
+    
+    def get_state(self):
+        return {
+            "num_channels": len(self.channels.keys()),
+            "channels": {c.cid:{"assigned": bool(c.target), "name": c.name} for c in self.channels.values()}
+        }
 
 class SharedMap(object):
     def __init__(self, shared):

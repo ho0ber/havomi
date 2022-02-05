@@ -89,68 +89,121 @@ def get_config():
         "device": device_filename,
     }
 
-def systray(event_queue, num_channels):
+def create_image():
+    # Generate an image and draw a pattern
+    width = 64
+    height = 64
+    color1 = "red"
+    color2 = "black"
+    image = Image.new('RGB', (width, height), color1)
+    dc = ImageDraw.Draw(image)
+    dc.rectangle(
+        (width // 2, 0, width, height // 2),
+        fill=color2)
+    dc.rectangle(
+        (0, height // 2, width // 2, height),
+        fill=color2)
 
-    def say_hello(systray):
-        print("Hello, World!")
+    return image
+
+class AppMenuItemAction(object):
+    def __init__(self, app_name, cid, app_state):
+        self.app_name = app_name
+        self.cid = cid
+        self.app_state = app_state
     
-    # def quit(systray):
-    #     event_queue.put(("interface", {"action": "quit"}))
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        self.app_state.event_queue.put(("interface", {"action": "assign", "app": self.app_name, "channel": self.cid}))
 
-    def change_color(systray):
-        event_queue.put(("interface", {"action": "quit"}))
+class AppMenu(object):
+    def __init__(self, cid, app_state):
+        self.cid = cid
+        self.app_state = app_state
     
-    # def apps():
-    #     mi = []
-    #     for app_name in get_application_names():
-    #         mi.append(MenuItem(
-    #             app_name,
-    #             lambda _,an=app_name: event_queue.put(("interface", {"action": "assign", "app": app_name, "channel": 1}))
-    #         ))
-    #     return mi
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        applications = get_application_names()
+        menu = []
+        for an in applications:
+            menu.append(MenuItem(an, AppMenuItemAction(an, self.cid, self.app_state)))
+        return menu
 
-    def items():
+class AssignMenuItem(object):
+    def __init__(self, cid, app_state):
+        self.cid = cid
+        self.app_state = app_state
+
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        return f"Assign Fader {self.cid}"
+
+class FaderMenuItem(object):
+    def __init__(self, cid, app_state):
+        self.cid = cid
+        self.app_state = app_state
+
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        if self.app_state.channels[self.cid]["assigned"]:
+            app_name = self.app_state.channels[self.cid]["name"]
+            return f"Fader {self.cid}: {app_name}"
+        else:
+            return f"Fader {self.cid}"
+
+class UnassignAction(object):
+    def __init__(self, cid, app_state):
+        self.cid = cid
+        self.app_state = app_state
+
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        self.app_state.event_queue.put(("interface", {"action": "unassign", "channel": self.cid}))
+
+class MenuItems(object):
+    def __init__(self, app_state):
+        self.app_state = app_state
+
+    def __call__(self, arg1=None, arg2=None, arg3=None):
         mi = []
-        for i in range(num_channels):
+        for i in range(self.app_state.num_channels):
             mi.append(
                 MenuItem(
-                    f"Fader {i}",
+                    FaderMenuItem(i, self.app_state),
                     Menu(
-                        MenuItem(
-                            lambda _,i=i: f"Assign channel {i}",
-                            Menu(lambda i=i: [MenuItem(an, lambda _,i=i,an=an: event_queue.put(("interface", {"action": "assign", "app": an, "channel": i}))) for an in get_application_names()]),
-                        ),
-                        MenuItem("Change color", change_color),
+                        MenuItem(AssignMenuItem(i, self.app_state), Menu(AppMenu(i, self.app_state))),
+                        MenuItem("Unassign", UnassignAction(i, self.app_state)),
                     )
                 )
             )
-        mi.append(MenuItem("Quit", lambda : event_queue.put(("interface", {"action": "quit"}))))
+        mi.append(MenuItem("Quit", lambda : self.app_state.event_queue.put(("interface", {"action": "quit"}))))
         return mi
 
+class AppState(object):
+    def __init__(self, num_channels, event_queue):
+        self.num_channels = num_channels
+        self.event_queue = event_queue
+        self.gen_channels()
+    
+    def gen_channels(self):
+        self.channels = {}
+        for i in range(self.num_channels):
+            self.channels[i] = {
+                "assigned": False,
+                "name": None,
+            }
+    def update(self, state):
+        updated = state["num_channels"] != self.num_channels or state["channels"] != self.channels
+        self.num_channels = state["num_channels"]
+        self.channels = state["channels"]
+        return updated
 
-    menu_options = Menu(items)
-        
-    # Call this when we update externally!
-    #Icon.update_menu
-
-
-    def create_image():
-        # Generate an image and draw a pattern
-        width = 64
-        height = 64
-        color1 = "red"
-        color2 = "black"
-        image = Image.new('RGB', (width, height), color1)
-        dc = ImageDraw.Draw(image)
-        dc.rectangle(
-            (width // 2, 0, width, height // 2),
-            fill=color2)
-        dc.rectangle(
-            (0, height // 2, width // 2, height),
-            fill=color2)
-
-        return image
+def systray(event_queue, update_queue, num_channels):
+    app_state = AppState(num_channels, event_queue)
+    menu_options = Menu(MenuItems(app_state))
 
     st = Icon("Havomi", create_image(), menu=menu_options,)
     st.run_detached()
-    return st
+    
+    # Process update events
+    while True:
+        event_type, event = update_queue.get()
+        if event_type == "state":
+            if app_state.update(event):
+                print("Updating systray menu")
+                st.update_menu()

@@ -55,21 +55,24 @@ def start():
     dev = Device(dev_info)
     shared_map, channel_map = init_channels(dev)
     event_queue = multiprocessing.Queue()
+    update_queue = multiprocessing.Queue()
 
-    st = systray(event_queue, len(channel_map.channels.keys()))
+    # st = systray(event_queue, len(channel_map.channels.keys()))
 
     midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue,dev.in_name))
     system_listener_process = multiprocessing.Process(target = system_listener.start, args=(event_queue,))
+    systray_process = multiprocessing.Process(target = systray, args=(event_queue, update_queue, len(channel_map.channels.keys())))
 
     midi_listener_process.start()
     system_listener_process.start()
+    systray_process.start()
 
     try:
-        event_handler.start(event_queue, dev, shared_map, channel_map, st)
+        event_handler.start(event_queue, dev, shared_map, channel_map, update_queue)
     except Exception as e:
         raise e
     finally:
         print("Shutting down listener processes")
         midi_listener_process.terminate()
         system_listener_process.terminate()
-        st.stop()
+        systray_process.terminate()

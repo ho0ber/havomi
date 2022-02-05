@@ -2,7 +2,7 @@ from collections import defaultdict
 from havomi.target import ApplicationVolume, DeviceVolume
 import havomi.windows_helpers as wh
 
-def start(event_queue, dev, shared_map, channel_map, systray):
+def start(event_queue, dev, shared_map, channel_map, update_queue):
     """
     This is the main event handler loop. It listens to the multiprocessing event queue and reacts
     to events based on basic rules. The intent is for this code to be static for all devices, and
@@ -127,3 +127,18 @@ def start(event_queue, dev, shared_map, channel_map, systray):
                 break
             elif event["action"] == "assign":
                 print(f"Got assign event: {event}")
+                channel = channel_map.channels[event["channel"]]
+                if event["app"] == "Master":
+                    channel.set_master()
+                else:
+                    channel.set_target_from_app_def(wh.get_app_def_from_name(event["app"]))
+                channel_map.save()
+                channel.update_display(dev, fader=True)
+            elif event["action"] == "unassign":
+                print(f"Got unassign event: {event}")
+                channel = channel_map.channels[event["channel"]]
+                channel.unset_target()
+                channel_map.save()
+                channel.update_display(dev, fader=True)
+
+        update_queue.put(("state", channel_map.get_state()))
