@@ -2,7 +2,8 @@ from collections import namedtuple
 import yaml
 import os
 import havomi.windows_helpers as wh
-
+import mido
+import mido.backends.rtmidi
 
 MapEntry = namedtuple("MapEntry",["control", "channel"])
 
@@ -112,3 +113,14 @@ class SharedMap(object):
             value = None
         
         return self.smap.get(key), value
+
+    def light(self, dev):
+        for c in self.smap.values():
+            if c and c.feedback:
+                value = c.down_value 
+
+                kwargs = {
+                    c.midi_id_field: c.midi_id,
+                    c.midi_value_field: value
+                }
+                dev.out_port.send(mido.Message(c.midi_type,**kwargs))

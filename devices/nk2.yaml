@@ -6,11 +6,11 @@ device_names:
     output: nanoKONTROL2
 
 shared:
-  - {func: media_prev,       type: button, mtype: cc, mid: 43, fb: false}
-  - {func: media_next,       type: button, mtype: cc, mid: 44, fb: false}
-  - {func: media_stop,       type: button, mtype: cc, mid: 42, fb: false}
-  - {func: media_play_pause, type: button, mtype: cc, mid: 41, fb: false}
-  - {func: quit,             type: button, mtype: cc, mid: 12, fb: false}
+  - {func: media_prev,       type: button, mtype: cc, mid: 43, fb: true}
+  - {func: media_next,       type: button, mtype: cc, mid: 44, fb: true}
+  - {func: media_stop,       type: button, mtype: cc, mid: 42, fb: true}
+  - {func: media_play_pause, type: button, mtype: cc, mid: 41, fb: true}
+  - {func: quit,             type: button, mtype: cc, mid: 46, fb: true}
 
 
 channels:

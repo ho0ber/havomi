@@ -21,6 +21,7 @@ def init_channels(dev):
     any DeviceChannels where default==master.
     """
     shared_map = SharedMap(dev.shared_controls)
+    shared_map.light(dev)
     channel_map = ChannelMap([
         Channel(
             cid=i,
