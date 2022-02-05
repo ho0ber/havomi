@@ -141,4 +141,5 @@ def start(event_queue, dev, shared_map, channel_map, update_queue):
                 channel_map.save()
                 channel.update_display(dev, fader=True)
 
+        # Update systray menu state after any event
         update_queue.put(("state", channel_map.get_state()))
