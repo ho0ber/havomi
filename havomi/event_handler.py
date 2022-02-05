@@ -115,11 +115,13 @@ def start(event_queue, dev, shared_map, channel_map, update_queue):
                             volume = min(a["level"] for a in event["apps"][channel.target.name])
                             mute = all(bool(a["mute"]) for a in event["apps"][channel.target.name])
                             channel.update_status(volume, mute, dev)
+                            channel.update_display(dev)
                     elif channel.target.sessions:
                         channel.refresh_sessions(dev)
                 elif type(channel.target) == DeviceVolume:
                     if channel.target.name == "Master":
                         channel.update_status(event["master"]["level"], event["master"]["mute"], dev)
+                        channel.update_display(dev)
 
         if event_type == "interface":
             if event["action"] == "quit":
