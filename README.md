@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/ho0ber/Havomi/main/static/images/icon.ico" height="24"> Havomi
+# <img src="https://raw.githubusercontent.com/ho0ber/Havomi/main/static/images/icon.ico" height="32"> Havomi
 **Havomi** - **Ha**rdware **Vo**lume **Mi**xer
 
 ### ⚠️ This project is still in the early stages. If you require a more stable tool, please use its predecessors, or consider one of the similar projects below. ⚠️
