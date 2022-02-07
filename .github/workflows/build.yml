@@ -34,10 +34,10 @@ jobs:
         python -m pip uninstall enum34 -y
     - name: Make Havomi Executable 
       run: |
-        pyinstaller -F --add-data "devices;devices" --noconsole -n havomi main.py
+        pyinstaller -F --add-data "static;static" --icon "static\images\icon.ico" --noconsole -n havomi main.py
     - name: Make Havomi Debug Executable 
       run: |
-        pyinstaller -F --add-data "devices;devices" -n havomi_debug main.py
+        pyinstaller -F --add-data "static;static" --icon "static\images\icon.ico" -n havomi_debug main.py
     - name: Make MIDI Tool Executable
       run: |
         pyinstaller -F -n midi_tool scripts/midi_tool.py

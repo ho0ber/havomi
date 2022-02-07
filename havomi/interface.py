@@ -30,6 +30,9 @@ def match_dev(name, dev_list):
             return dev
     return None
 
+def static_path():
+    return join(dirname(dirname(realpath(__file__))), "static")
+
 def custom_device_files():
     abs_home = abspath(expanduser("~"))
     app_dir = join(abs_home, ".havomi")
@@ -42,7 +45,7 @@ def custom_device_files():
         return []
 
 def find_connected_device(inputs, outputs):
-    devices_path = join(dirname(dirname(realpath(__file__))),"devices")
+    devices_path = join(static_path(),"devices")
     device_configs = [(x,join(devices_path, x)) for x in listdir(devices_path) if x.endswith(".yaml")]
     device_configs += custom_device_files()
 
@@ -86,6 +89,11 @@ def get_config():
         "output": output_dev,
         "device": device_filename,
     }
+
+def load_icon():
+    im = Image.open(join(static_path(), "images", "tray_16.png"))
+    im = im.convert('RGBA')
+    return im
 
 def create_image():
     # Generate an image and draw a pattern
@@ -202,7 +210,7 @@ def systray(event_queue, update_queue, num_channels):
     app_state = AppState(num_channels, event_queue)
     menu_options = Menu(MenuItems(app_state))
 
-    st = Icon("Havomi", create_image(), menu=menu_options,)
+    st = Icon("Havomi", load_icon(), menu=menu_options,)
     st.run_detached()
     
     # Process update events

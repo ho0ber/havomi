@@ -1,1 +1,1 @@
-pyinstaller -F --add-data "devices;devices" -n havomi main.py
+pyinstaller -F --add-data "static;static" --icon "static\images\icon.ico" --noconsole -n havomi main.py
