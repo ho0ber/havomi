@@ -1,8 +1,11 @@
 from collections import defaultdict
+import multiprocessing
+from havomi import midi_listener
+from havomi.device import Device
 from havomi.target import ApplicationVolume, DeviceVolume
 import havomi.windows_helpers as wh
 
-def start(event_queue, dev, shared_map, channel_map, update_queue):
+def start(event_queue, dev, shared_map, channel_map, update_queue, midi_listener_process):
     """
     This is the main event handler loop. It listens to the multiprocessing event queue and reacts
     to events based on basic rules. The intent is for this code to be static for all devices, and
@@ -142,6 +145,14 @@ def start(event_queue, dev, shared_map, channel_map, update_queue):
                 channel.unset_target()
                 channel_map.save()
                 channel.update_display(dev, fader=True)
+            elif event["action"] == "change_dev":
+                # This should be refactored out eventually, but for now we can explicitly overwrite "dev" and the maps and
+                # then restart the midi_listener.
+                midi_listener_process.terminate()
+                dev = Device(event)
+                shared_map, channel_map = dev.init_channels()
+                midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue, dev.in_name))
+                midi_listener_process.start()
 
         # Update systray menu state after any event
         update_queue.put(("state", channel_map.get_state()))

@@ -5,42 +5,7 @@ import havomi.midi_listener as midi_listener
 import havomi.system_listener as system_listener
 import havomi.event_handler as event_handler
 from havomi.device import Device
-from havomi.channel import Channel
-from havomi.control_mappings import ChannelMap, SharedMap
 from havomi.interface import get_config, systray
-
-DIR = pathlib.Path(__file__).parent.parent.resolve()
-DEVICES = DIR.joinpath("devices")
-if not DEVICES.is_dir():
-    DIR = pathlib.Path(__file__).parent.resolve()
-    DEVICES = DIR.joinpath("devices")
-
-def init_channels(dev):
-    """
-    Initialize the Channels with basic mappings to the DeviceChannels. This will also configure
-    any DeviceChannels where default==master.
-    """
-    shared_map = SharedMap(dev.shared_controls)
-    shared_map.light(dev)
-    channel_map = ChannelMap([
-        Channel(
-            cid=i,
-            name="Unused",
-            color="black",
-            level=0,
-            mute=False,
-            dev_binding=dev.device_channels[i],
-            target=None
-        )
-        for i in range(len(dev.device_channels))
-    ], dev.unique_id)
-
-    for channel in channel_map.channels.values():
-        if channel.dev_binding.default == "master":
-            channel.set_master()
-        channel.update_display(dev, fader=True)
-
-    return shared_map, channel_map
 
 def start():
     """
@@ -54,20 +19,20 @@ def start():
 
     dev_info = get_config()
     dev = Device(dev_info)
-    shared_map, channel_map = init_channels(dev)
+    shared_map, channel_map = dev.init_channels()
     event_queue = multiprocessing.Queue()
     update_queue = multiprocessing.Queue()
 
-    midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue,dev.in_name))
+    midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue, dev.in_name))
     system_listener_process = multiprocessing.Process(target = system_listener.start, args=(event_queue,))
-    systray_process = multiprocessing.Process(target = systray, args=(event_queue, update_queue, len(channel_map.channels.keys())))
+    systray_process = multiprocessing.Process(target = systray, args=(event_queue, update_queue, len(channel_map.channels.keys(), dev_info)))
 
     midi_listener_process.start()
     system_listener_process.start()
     systray_process.start()
 
     try:
-        event_handler.start(event_queue, dev, shared_map, channel_map, update_queue)
+        event_handler.start(event_queue, dev, shared_map, channel_map, update_queue, midi_listener_process)
     except Exception as e:
         raise e
     finally:

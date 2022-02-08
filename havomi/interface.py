@@ -161,6 +161,42 @@ class UnassignAction(object):
     def __call__(self, arg1=None, arg2=None, arg3=None):
         self.app_state.event_queue.put(("interface", {"action": "unassign", "channel": self.cid}))
 
+class InputDeviceMenu(object):
+    def __init__(self, app_state):
+        self.app_state = app_state
+    
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        inputs = mido.get_input_names()
+        menu = []
+        for input in inputs:
+            menu.append(MenuItem(input, Menu(OutputDeviceMenu(input, self.app_state), checked=(self.app_state.dev_info.get("input") == input))))
+        return menu
+
+class OutputDeviceMenu(object):
+    def __init__(self, input, app_state):
+        self.input = input
+        self.app_state = app_state
+    
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        outputs = mido.get_output_names()
+        menu = []
+        for output in outputs:
+            menu.append(MenuItem(output, Menu(DeviceFileMenu(self.input, output, self.app_state), checked=(self.app_state.dev_info.get("output") == output))))
+        return menu
+
+class DeviceFileMenu(object):
+    def __init__(self, input, output, app_state):
+        self.input = input
+        self.output = output
+        self.app_state = app_state
+    
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        outputs = mido.get_output_names()
+        menu = []
+        for output in outputs:
+            menu.append(MenuItem(output, DeviceFileMenuItem(self.input, self.output, self.app_state)))
+        return menu
+
 class MenuItems(object):
     def __init__(self, app_state):
         self.app_state = app_state
@@ -177,14 +213,18 @@ class MenuItems(object):
                     )
                 )
             )
+        mi.append(MenuItem("Midi Device", Menu(InputDeviceMenu(self.app_state))))
         mi.append(MenuItem("Quit", lambda : self.app_state.event_queue.put(("interface", {"action": "quit"}))))
         return mi
 
 class AppState(object):
-    def __init__(self, num_channels, event_queue):
+    def __init__(self, num_channels, event_queue, dev_info):
         self.num_channels = num_channels
         self.event_queue = event_queue
         self.application_names = get_application_names()
+        self.in_devices = mido.get_input_names()
+        self.out_devices = mido.get_output_names()
+        self.dev_info = dev_info
         self.gen_channels()
     
     def gen_channels(self):
@@ -204,10 +244,12 @@ class AppState(object):
         self.num_channels = state["num_channels"]
         self.channels = state["channels"]
         self.application_names = apps
+        self.in_devices = mido.get_input_names()
+        self.out_devices = mido.get_output_names()
         return updated
 
-def systray(event_queue, update_queue, num_channels):
-    app_state = AppState(num_channels, event_queue)
+def systray(event_queue, update_queue, num_channels, dev_info):
+    app_state = AppState(num_channels, event_queue, dev_info)
     menu_options = Menu(MenuItems(app_state))
 
     st = Icon("Havomi", load_icon(), menu=menu_options,)
