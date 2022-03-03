@@ -2,6 +2,8 @@ import yaml
 import mido
 import mido.backends.rtmidi
 import time
+from havomi.channel import Channel
+from havomi.control_mappings import ChannelMap, SharedMap
 from havomi.controls import *
 from havomi.device_channel import DeviceChannel
 
@@ -22,6 +24,33 @@ class Device(object):
         self.scribble = self.config.get("scribble", False)
         self.out_port = self.open_out_port()
         self.unique_id = self.config["unique_id"]
+
+    def init_channels(self):
+        """
+        Initialize the Channels with basic mappings to the DeviceChannels. This will also configure
+        any DeviceChannels where default==master.
+        """
+        shared_map = SharedMap(self.shared_controls)
+        shared_map.light(self)
+        channel_map = ChannelMap([
+            Channel(
+                cid=i,
+                name="Unused",
+                color="black",
+                level=0,
+                mute=False,
+                dev_binding=self.device_channels[i],
+                target=None
+            )
+            for i in range(len(self.device_channels))
+        ], self.unique_id)
+
+        for channel in channel_map.channels.values():
+            if channel.dev_binding.default == "master":
+                channel.set_master()
+            channel.update_display(self, fader=True)
+
+        return shared_map, channel_map
 
     def open_out_port(self):
         out_port = None

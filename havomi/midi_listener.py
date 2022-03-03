@@ -1,6 +1,23 @@
+import multiprocessing
 import mido
 import mido.backends.rtmidi
 import time
+
+from havomi.device import Device
+
+# def stop(dev, midi_listener_process):
+#     dev.out_port.close()
+#     midi_listener_process.terminate()
+
+# def init(dev_info, event_queue):
+#     dev = Device(dev_info)
+#     shared_map, channel_map = dev.init_channels()
+#     if channel_map.load():
+#         for channel in channel_map.channels.values():
+#             channel.update_display(dev, fader=True)
+#     midi_listener_process = multiprocessing.Process(target = start, args=(event_queue, dev.in_name))
+
+#     return shared_map, channel_map, dev, midi_listener_process
 
 def start(event_queue, dev_name):
     """

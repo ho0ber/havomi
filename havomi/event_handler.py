@@ -5,20 +5,16 @@ from havomi.device import Device
 from havomi.target import ApplicationVolume, DeviceVolume
 import havomi.windows_helpers as wh
 
-def start(event_queue, dev, shared_map, channel_map, update_queue, midi_listener_process):
+def start(event_queue, dev, shared_map, channel_map, update_queue):
     """
     This is the main event handler loop. It listens to the multiprocessing event queue and reacts
     to events based on basic rules. The intent is for this code to be static for all devices, and
     for device config and application config (target bindings) to be the means by which we change
     behaviors of various controls.
     """
+    print("Starting event_handler")
     active_modes = set()
     active_channel_modes = defaultdict(set)
-
-    # No idea why I need to do this here rather than in main:init_channels
-    if channel_map.load():
-        for channel in channel_map.channels.values():
-            channel.update_display(dev, fader=True)
 
     while True:
         event_type,event = event_queue.get()
@@ -128,8 +124,9 @@ def start(event_queue, dev, shared_map, channel_map, update_queue, midi_listener
 
         if event_type == "interface":
             if event["action"] == "quit":
+                # midi_listener_process.terminate()
                 print("Got quit from menu; quitting.")
-                break
+                return("quit", None)
             elif event["action"] == "assign":
                 print(f"Got assign event: {event}")
                 channel = channel_map.channels[event["channel"]]
@@ -148,11 +145,24 @@ def start(event_queue, dev, shared_map, channel_map, update_queue, midi_listener
             elif event["action"] == "change_dev":
                 # This should be refactored out eventually, but for now we can explicitly overwrite "dev" and the maps and
                 # then restart the midi_listener.
+                print(f"Got signal to change device: {event}")
+                return ("restart_midi", event["dev_info"])
+                # midi_listener.stop(dev, midi_listener_process)
+                dev.out_port.close()
                 midi_listener_process.terminate()
-                dev = Device(event)
+                midi_listener_process.join()
+                print("terminated midi listener")
+                # shared_map, channel_map, dev, midi_listener_process = midi_listener.init(event["dev_info"], event_queue)
+
+                dev = Device(event["dev_info"])
                 shared_map, channel_map = dev.init_channels()
+                print("inited device")
+                if channel_map.load():
+                    for channel in channel_map.channels.values():
+                        channel.update_display(dev, fader=True)
                 midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue, dev.in_name))
                 midi_listener_process.start()
 
         # Update systray menu state after any event
         update_queue.put(("state", channel_map.get_state()))
+    print("Did I get here?")

@@ -18,25 +18,48 @@ def start():
     multiprocessing.freeze_support()
 
     dev_info = get_config()
-    dev = Device(dev_info)
-    shared_map, channel_map = dev.init_channels()
-    event_queue = multiprocessing.Queue()
-    update_queue = multiprocessing.Queue()
-
-    midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue, dev.in_name))
-    system_listener_process = multiprocessing.Process(target = system_listener.start, args=(event_queue,))
-    systray_process = multiprocessing.Process(target = systray, args=(event_queue, update_queue, len(channel_map.channels.keys(), dev_info)))
-
-    midi_listener_process.start()
-    system_listener_process.start()
-    systray_process.start()
-
+    
     try:
-        event_handler.start(event_queue, dev, shared_map, channel_map, update_queue, midi_listener_process)
+        while True:
+            event_queue = multiprocessing.Queue()
+            update_queue = multiprocessing.Queue()
+
+            # shared_map, channel_map, dev, midi_listener_process = midi_listener.init(dev_info, event_queue)
+            dev = Device(dev_info)
+            shared_map, channel_map = dev.init_channels()
+            if channel_map.load():
+                for channel in channel_map.channels.values():
+                    channel.update_display(dev, fader=True)
+
+            midi_listener_process = multiprocessing.Process(target = midi_listener.start, args=(event_queue, dev.in_name))
+            system_listener_process = multiprocessing.Process(target = system_listener.start, args=(event_queue,))
+            systray_priocess = multiprocessing.Process(target = systray, args=(event_queue, update_queue, len(channel_map.channels.keys()), dev_info))
+
+            system_listener_process.start()
+            systray_priocess.start()
+            midi_listener_process.start()
+            print("Got past process starts...")
+
+            exit_status, exit_data = event_handler.start(event_queue, dev, shared_map, channel_map, update_queue)
+
+            if exit_status == "quit":
+                break
+            if exit_status == "restart_midi":
+                print("Restarting")
+                dev.out_port.close()
+                system_listener_process.terminate()
+                systray_priocess.terminate()
+                midi_listener_process.terminate()
+                system_listener_process.join()
+                systray_priocess.join()
+                midi_listener_process.join()
+                dev_info = exit_data
+
     except Exception as e:
+        print(f"Exception? {e}")
         raise e
     finally:
         print("Shutting down listener processes")
-        midi_listener_process.terminate()
         system_listener_process.terminate()
-        systray_process.terminate()
+        systray_priocess.terminate()
+        midi_listener_process.terminate()

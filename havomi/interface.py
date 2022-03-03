@@ -38,7 +38,6 @@ def custom_device_files():
     app_dir = join(abs_home, ".havomi")
     custom_dev = join(app_dir, "custom")
     if exists(custom_dev):
-        print("Found custom files:")
         return [(f"custom:{x}",join(custom_dev, x)) for x in listdir(custom_dev) if x.endswith(".yaml")]
     else:
         print(f"{custom_dev} does not exist")
@@ -169,7 +168,8 @@ class InputDeviceMenu(object):
         inputs = mido.get_input_names()
         menu = []
         for input in inputs:
-            menu.append(MenuItem(input, Menu(OutputDeviceMenu(input, self.app_state), checked=(self.app_state.dev_info.get("input") == input))))
+            checked = (self.app_state.dev_info.get("input") == input)
+            menu.append(MenuItem(input, Menu(OutputDeviceMenu(input, self.app_state))))
         return menu
 
 class OutputDeviceMenu(object):
@@ -181,7 +181,8 @@ class OutputDeviceMenu(object):
         outputs = mido.get_output_names()
         menu = []
         for output in outputs:
-            menu.append(MenuItem(output, Menu(DeviceFileMenu(self.input, output, self.app_state), checked=(self.app_state.dev_info.get("output") == output))))
+            checked = (self.app_state.dev_info.get("output") == output)
+            menu.append(MenuItem(output, Menu(DeviceFileMenu(self.input, output, self.app_state))))
         return menu
 
 class DeviceFileMenu(object):
@@ -191,11 +192,26 @@ class DeviceFileMenu(object):
         self.app_state = app_state
     
     def __call__(self, arg1=None, arg2=None, arg3=None):
-        outputs = mido.get_output_names()
+        devices_path = join(static_path(),"devices")
+        device_configs = [(x,join(devices_path, x)) for x in listdir(devices_path) if x.endswith(".yaml")]
+        device_configs += custom_device_files()
+
         menu = []
-        for output in outputs:
-            menu.append(MenuItem(output, DeviceFileMenuItem(self.input, self.output, self.app_state)))
+        for choice in self.app_state.find_dev_files(self.input, self.output):
+            menu.append(MenuItem(choice[0], DeviceFileMenuItemAction(self.input, self.output, choice, self.app_state)))
         return menu
+
+class DeviceFileMenuItemAction(object):
+    def __init__(self, input, output, dev_file_info, app_state):
+        self.input = input
+        self.output = output
+        self.app_state = app_state
+        self.dev_file_info = dev_file_info
+        self.dev_filename, self.dev_file_path = self.dev_file_info
+    
+    def __call__(self, arg1=None, arg2=None, arg3=None):
+        self.app_state.event_queue.put(("interface", {"action": "change_dev", "dev_info": {"input": self.input, "output": self.output, "device": self.dev_file_path}}))
+
 
 class MenuItems(object):
     def __init__(self, app_state):
@@ -226,6 +242,29 @@ class AppState(object):
         self.out_devices = mido.get_output_names()
         self.dev_info = dev_info
         self.gen_channels()
+        self.collect_dev_files()
+    
+    def collect_dev_files(self):
+        devices_path = join(static_path(),"devices")
+        device_configs = [(x,join(devices_path, x)) for x in listdir(devices_path) if x.endswith(".yaml")]
+        device_configs += custom_device_files()
+
+        dev_files = {}
+        for config_filename,config_path in device_configs:
+            with open(config_path) as config_file:
+                config = yaml.safe_load(config_file.read())
+                conf_input = config.get("device_names",{}).get("windows",{}).get("input")
+                conf_output = config.get("device_names",{}).get("windows",{}).get("output")
+                dev_files[(conf_input, conf_output)] = (config_filename,config_path)
+
+        self.dev_files = dev_files
+
+    def find_dev_files(self, input, output):
+        found = []
+        for devs,files in self.dev_files.items():
+            if input.startswith(devs[0]) and output.startswith(devs[1]):
+                found.append(files)
+        return found
     
     def gen_channels(self):
         self.channels = {}
@@ -249,6 +288,7 @@ class AppState(object):
         return updated
 
 def systray(event_queue, update_queue, num_channels, dev_info):
+    print("Starting systray...")
     app_state = AppState(num_channels, event_queue, dev_info)
     menu_options = Menu(MenuItems(app_state))
 

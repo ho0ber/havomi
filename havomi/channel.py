@@ -2,7 +2,7 @@ import mido
 import mido.backends.rtmidi
 from dataclasses import dataclass
 
-from havomi.device import DeviceChannel
+from havomi.device_channel import DeviceChannel
 from havomi.target import ApplicationVolume, DeviceVolume, SystemSoundsVolume, Target
 from havomi.scribble import scribble
 import havomi.windows_helpers as wh
