@@ -1,0 +1,14 @@
+name: Compile Diagram
+on:
+  push:
+    branches:
+      - action
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compile
+        run: |
+          echo $(date '+%s')
+    
