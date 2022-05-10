@@ -1,4 +1,4 @@
-name: Compile Diagram
+name: Timestamp
 on:
   push:
     branches:
@@ -8,7 +8,9 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
-      - name: Compile
+      - name: Store time
         run: |
-          echo $(date '+%s')
-    
+          echo "curtime=$(date '+%s')" >> $GITHUB_ENV
+      - name: Use time
+        run: |
+          echo "${{ env.curtime }}"
