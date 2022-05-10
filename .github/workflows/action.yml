@@ -1,0 +1,16 @@
+name: Timestamp
+on:
+  push:
+    branches:
+      - action
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Store time
+        run: |
+          echo "curtime=$(date '+%s')" >> $GITHUB_ENV
+      - name: Use time
+        run: |
+          echo "${{ env.curtime }}"
