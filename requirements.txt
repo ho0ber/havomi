@@ -4,4 +4,4 @@ mido==1.2.10
 PyYAML==6.0
 pywin32==300
 pystray==0.19.2
-Pillow==10.0.1
+Pillow==10.2.0
