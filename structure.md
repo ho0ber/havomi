@@ -1,5 +1,8 @@
-%% Mermaid diagram for overall structure and flow
-%% Needs updating to match terms in the app
+# Mermaid diagram for overall structure and flow
+
+Needs updating to match terms in the app
+
+```mermaid
 flowchart LR
     subgraph flow
         direction LR
@@ -22,3 +25,4 @@ flowchart LR
         event_handler -->|call| midi_sender
         event_handler -->|call| system_sender
     end
+```
