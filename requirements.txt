@@ -1,7 +1,7 @@
 pycaw==20181226       
-python-rtmidi==1.4.9
+python-rtmidi==1.5.8
 mido==1.2.10
-PyYAML==6.0
-pywin32==300
+PyYAML==6.0.3
+pywin32==312
 pystray==0.19.2
-Pillow==10.3.0
+Pillow==13.0.0
