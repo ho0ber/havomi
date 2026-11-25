@@ -16,12 +16,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.12"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -42,17 +42,14 @@ jobs:
       run: |
         pyinstaller -F -n midi_tool scripts/midi_tool.py
     - name: Upload havomi artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v7
       with:
           name: Havomi
           path: dist/havomi.exe
-    - name: Upload havomi_debug artifact
-      uses: actions/upload-artifact@v2
+    - name: Upload debug tools artifact
+      uses: actions/upload-artifact@v7
       with:
           name: Havomi Debug Tools
-          path: dist/havomi_debug.exe
-    - name: Upload MIDI Tool artifact
-      uses: actions/upload-artifact@v2
-      with:
-          name: Havomi Debug Tools
-          path: dist/midi_tool.exe
+          path: |
+            dist/havomi_debug.exe
+            dist/midi_tool.exe
